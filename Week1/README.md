@@ -1,0 +1,1 @@
+This is the thirt excercise of the W1 which calculate the power of a number, showing the envioronment 
