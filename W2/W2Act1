@@ -1,7 +1,8 @@
 ## Week 2 – Activity 1: mathematical operations
 
+import math
 
-#def get_tpe():
+#def get_type():
 #    return input("Do you want to work with real numbers (r) or complex numbers (c)?: ").lower()
 
 def operations(x, y, operator):
@@ -19,7 +20,7 @@ def operations(x, y, operator):
             return None
     elif operator == "%":
         if y != 0:
-            return x % y
+            return math.fmod(x, y)
         else:
             print("Error: Division by zero is not allowed.")
             return None
@@ -32,12 +33,12 @@ def main():
     
     while True:
 
-        tipe = input("Do you want to work with real numbers (r) or complex numbers (c)?: ").lower()
+        type = input("Do you want to work with real numbers (r) or complex numbers (c)?: ").lower()
 
-        if tipe == "r":
+        if type == "r":
             numbera = float(input("Enter number a: "))
             numberb = float(input("Enter number b: "))
-        elif tipe == "c":
+        elif type == "c":
             numbera = complex(input("Enter number a: "))
             numberb = complex(input("Enter number b: "))
         else:
