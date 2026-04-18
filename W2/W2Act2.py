@@ -15,6 +15,7 @@ def get_info_students():
 
 def display_students(students):
     print("\nStudent Information:")
+    new_list = sorted(students)
     for i in range(0, len(new_list), 3):
         print(f"Name: {new_list[i]}, Age: {new_list[i + 1]}, Student ID: {new_list[i + 2]}")
 
