@@ -18,7 +18,7 @@ def get_info_students():
 
     for i in range(num_students):
         name = input(f"Enter the name of student {i + 1}: ")
-        age = input(f"Enter the age of student {i + 1}: ")
+        age = int(input(f"Enter the age of student {i + 1}: "))
         student_number = input(f"Enter the student ID of student {i + 1}: ")
 
         student = Student()
@@ -27,7 +27,8 @@ def get_info_students():
 
         print()
 
-def display_students(students):
+
+def display_students():
     print("\nStudent Information:")
     new_list = sorted(students, key=lambda s: s.age)
 
@@ -37,4 +38,4 @@ def display_students(students):
 
 if __name__ == "__main__":
     get_info_students()
-    display_students(students)
+    display_students()
