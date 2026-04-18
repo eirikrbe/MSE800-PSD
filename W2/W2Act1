@@ -1,9 +1,18 @@
 ## Week 2 – Activity 1: mathematical operations
 
-import math
 
-#def get_type():
-#    return input("Do you want to work with real numbers (r) or complex numbers (c)?: ").lower()
+
+def get_type(choice):
+      if choice == "r":
+        numbera = float(input("Enter number a: "))
+        numberb = float(input("Enter number b: "))
+      elif choice == "c":
+        numbera = complex(input("Enter number a: "))
+        numberb = complex(input("Enter number b: "))
+      else:
+        print("Invalid input. Please enter 'r' for real numbers or 'c' for complex numbers.") 
+        return None, None
+      return  numbera, numberb
 
 def operations(x, y, operator):
     if operator == "+":
@@ -20,7 +29,7 @@ def operations(x, y, operator):
             return None
     elif operator == "%":
         if y != 0:
-            return math.fmod(x, y)
+            return x % y
         else:
             print("Error: Division by zero is not allowed.")
             return None
@@ -33,17 +42,7 @@ def main():
     
     while True:
 
-        type = input("Do you want to work with real numbers (r) or complex numbers (c)?: ").lower()
-
-        if type == "r":
-            numbera = float(input("Enter number a: "))
-            numberb = float(input("Enter number b: "))
-        elif type == "c":
-            numbera = complex(input("Enter number a: "))
-            numberb = complex(input("Enter number b: "))
-        else:
-            print("Invalid input. Please enter 'r' for real numbers or 'c' for complex numbers.")
-            continue
+        numbera, numberb = get_type(input("Do you want to work with real numbers (r) or complex numbers (c)?: ").lower())
 
         operator = input("Enter the operator (+, -, *, /, %): ")
 

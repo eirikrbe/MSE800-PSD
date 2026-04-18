@@ -18,7 +18,9 @@ def main():
     while True:
         base = get_float_input("Enter the Base: ")
         exp = get_float_input("Enter the Exponent: ")
+
         ## Prevent undefined operation where base is 0 and exponent is non-positive
+        
         if base == 0 and exp <= 0:
             print("Undefined: 0 cannot be raised to a non-positive exponent.")
             continue
