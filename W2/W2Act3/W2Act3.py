@@ -14,6 +14,7 @@ class Calculator:
         self.a = a
         self.b = b
         self.operator = operator
+        self._result = None ## Store the result of the calculation after execution. read via the result property.
 
     def _validate_operation(self):
         """Validate the operation before execution.
@@ -45,21 +46,34 @@ class Calculator:
         self._validate_operation()
         
         if self.operator == "+":
-            return self.a + self.b
+            self._result = self.a + self.b
+            return self._result
         elif self.operator == "-":
-            return self.a - self.b
+            self._result = self.a - self.b
+            return self._result
         elif self.operator == "*":
-            return self.a * self.b
+            self._result = self.a * self.b
+            return self._result
         elif self.operator == "/":
-            return self.a / self.b
+            self._result = self.a / self.b
+            return self._result
         elif self.operator == "%":
-            return self.a % self.b
+            self._result = self.a % self.b
+            return self._result
         raise ValueError(f"Unsupported operator: {self.operator}")
     
     def __str__(self):
         """Returns the operation as a string for display purposes."""
         
         return f"{self.a} {self.operator} {self.b}"
+    
+    @property
+    def result(self):
+        """Returns the result of the operation, if calculated."""
+        
+        if self._result is None:
+            raise ValueError("Operation has not been calculated yet.")
+        return self._result
     
 
 def get_number_kind():
@@ -108,7 +122,7 @@ def main():
 
             result = operation.calculate()
             print()
-            print(f"The result of {operation} is {result}")
+            print(f"The result of {operation} is {result}.")
             print()
 
         except (ZeroDivisionError, TypeError, ValueError) as e:

@@ -2,13 +2,15 @@
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/eirikrbe/MSE800-PSD/tree/main/W2/W2Act3)
 
-A command-line calculator that performs basic mathematical operations on real and complex numbers, using one class with four methods and four functions.
+A command-line calculator that performs basic mathematical operations with real and complex numbers, using one class with five methods and four functions
 
 
 ## Features
 
 - Supports real and complex number arithmetic.
 - Handles five operators: +, -, *, /, %.
+- The result is stored as a private attribute.
+- The result is only accessible through property getter. 
 - Displays clear error messages for invalid operations.
 - Prompts users to re-enter if the input is invalid.
 - Option to continue or exit after each calculation.
