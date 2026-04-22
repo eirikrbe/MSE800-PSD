@@ -20,30 +20,38 @@ A command-line calculator that performs basic mathematical operations with real 
 python W2Act3.py
 ```
 
-### Screenshot
+### Screenshot successful cases
 
 ![OOP mathematical operations](OOPmath-screenshot.png)
 
-### Example Interaction
+### Example Interaction of critical cases
 
 ```
-Do you want to work with real numbers (r) or complex numbers (c)?: r
-Enter number a: 2
-Enter number b: 2
-Enter the operator (+, -, *, /, %): +
-The result of 2.0 + 2.0 is 4.0
-Do you want to perform another calculation? (y/n): y
-Do you want to work with real numbers (r) or complex numbers (c)?: c
-Enter number a: 2-j
-Enter number b: 2+j
-Enter the operator (+, -, *, /, %): *
-The result of (2-1j) * (2+1j) is (5+0j)
-Do you want to perform another calculation? (y/n): y
+Week 2 – Activity 3: OOP mathematical operations
+
 Do you want to work with real numbers (r) or complex numbers (c)?: r
 Enter number a: 2
 Enter number b: 0
 Enter the operator (+, -, *, /, %): /
 Error: Division by zero is not allowed.
+Do you want to perform another calculation? (y/n): y
+
+Week 2 – Activity 3: OOP mathematical operations
+
+Do you want to work with real numbers (r) or complex numbers (c)?: r
+Enter number a: 2
+Enter number b: 0
+Enter the operator (+, -, *, /, %): %
+Error: Modulo by zero is not allowed.
+Do you want to perform another calculation? (y/n): y
+
+Week 2 – Activity 3: OOP mathematical operations
+
+Do you want to work with real numbers (r) or complex numbers (c)?: c
+Enter number a: 2-j
+Enter number b: 2-j
+Enter the operator (+, -, *, /, %): %
+Error: Modulo operation is not supported for complex numbers.
 Do you want to perform another calculation? (y/n): n
 ```
 

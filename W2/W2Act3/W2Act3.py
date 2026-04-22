@@ -8,6 +8,7 @@ class Calculator:
         a: First operand (float or complex).
         b: Second operand (float or complex).
         operator: One of +, -, *, /, %.
+        _result: private attribute, stores the result of the calculation.
     """
 
     def __init__(self, a, b, operator):
