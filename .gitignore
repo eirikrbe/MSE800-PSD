@@ -6,6 +6,9 @@
 MySQL Local.session.sql
 W4/Test_SQL/
 
+# Backup files
+*.bkp
+
 # Python cache
 __pycache__/
 **/__pycache__/
