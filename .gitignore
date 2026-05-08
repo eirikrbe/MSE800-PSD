@@ -4,7 +4,7 @@
 # Database and local session files
 *.db
 MySQL Local.session.sql
-
+W4/Test_SQL/
 
 # Python cache
 __pycache__/
