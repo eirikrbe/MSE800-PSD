@@ -1,0 +1,22 @@
+
+
+class User:
+    def __init__(self, full_name, email, password_hash, role, phone=None, user_id=None, created_at=None):
+        self.user_id = user_id
+        self.full_name = full_name
+        self.email = email
+        self.password_hash = password_hash
+        self.phone = phone
+        self.role = role
+        self.created_at = created_at
+
+
+    def get_user_details(self):
+        return {
+            "user_id": self.user_id,
+            "full_name": self.full_name,
+            "email": self.email,
+            "role": self.role,
+            "phone": self.phone,
+            "created_at": self.created_at
+        }
