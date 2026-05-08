@@ -9,7 +9,7 @@
 The use case scenario diagrams is based on the database design created in Week 3 Activity 2 and show how the main actor: User
 
 
-![W4Act3](W5Act1.drawio.png)
+![W4Act3](W5Act1.png)
 
 ## Use Case Diagram: Customer Operations
 
