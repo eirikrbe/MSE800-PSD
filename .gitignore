@@ -1,2 +1,13 @@
 .DS_Store
 .vscode/
+
+# Database and local session files
+example.db
+MySQL Local.session.sql
+W4Act1.db
+W4/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.py[cod]
