@@ -6,12 +6,12 @@
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue)](https://github.com/eirikrbe/MSE800-PSD/tree/main/W5/W4Act1)
 
 
-The use case scenario diagrams is based on the database design created in Week 3 Activity 2 and show how the main actors (User and Admin) interact with the system.
+The use case scenario diagrams is based on the database design created in Week 3 Activity 2 and show how the main actor: User
 
 
 ![W4Act3](W5Act1.drawio.png)
 
-## Use Case Diagram 1: Customer Operations
+## Use Case Diagram: Customer Operations
 
 ### Purpose
 The user diagram shows the main functions available to a customer. The user can create an account, log in, view currency information, check exchange rates, create exchange transactions and view transaction history. 
