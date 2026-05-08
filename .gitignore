@@ -2,9 +2,8 @@
 .vscode/
 
 # Database and local session files
-example.db
+*.db
 MySQL Local.session.sql
-W4Act1.db
 W4/
 
 # Python cache
