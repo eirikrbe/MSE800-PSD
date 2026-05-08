@@ -73,6 +73,35 @@ class DatabaseManager:
         except sqlite3.Error as e:
             raise Exception(f"Error creating tables: {e}")
 
+        
+    def execute_query(self, query, params=None):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query, params or ())
+            self.connection.commit()
+            return cursor
+
+        except sqlite3.Error as e:
+            raise Exception(f"Error executing query: {e}")
+        
+    def fetch_one(self, query, params=None):
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query, params or ())
+            return cursor.fetchone()
+        except sqlite3.Error as e:
+            raise Exception(f"Error fetching one record: {e}")
+
+    def fetch_all(self, query, params=None):
+        try: 
+            cursor = self.connection.cursor()
+            cursor.execute(query, params or ())
+            return cursor.fetchall()
+        except sqlite3.Error as e:
+            raise Exception(f"Error fetching records: {e}")
+
+
+
 
 if __name__ == "__main__":
     db = DatabaseManager()

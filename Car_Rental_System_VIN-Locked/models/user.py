@@ -7,7 +7,7 @@ class User:
         self.email = email
         self.password_hash = password_hash
         self.phone = phone
-        self.role = role
+        self.role = role.lower()
         self.created_at = created_at
 
 
