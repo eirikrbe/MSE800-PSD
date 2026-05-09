@@ -1,0 +1,74 @@
+@startuml
+title Clinic System - Appointment Booking and Medication Order
+
+|Patient|
+start
+:Log in / register;
+:Request consultation with doctor and date;
+
+|System|
+:Check appointment availability;
+
+if (Slot available?) then (Yes)
+  :Reserve appointment slot;
+  :Calculate booking fee;
+
+  |Patient|
+  :Pay booking fee;
+
+  |System|
+  :Process booking payment;
+
+  if (Booking payment successful?) then (Yes)
+    :Confirm appointment;
+
+    |Patient|
+    :Request medication order;
+
+    |System|
+    :Validate prescription;
+
+    if (Prescription valid?) then (Yes)
+      :Calculate medication cost;
+
+      |Patient|
+      :Pay medication cost;
+
+      |System|
+      :Process medication payment;
+
+      if (Medication payment successful?) then (Yes)
+        :Send medication request to pharmacy;
+
+        |Pharmacy|
+        :Prepare medication;
+        :Dispatch medication order;
+
+        |Patient|
+        :Receive medication;
+
+      else (No)
+        |System|
+        :Cancel medication order;
+        :Notify patient of medication payment failure;
+      endif
+
+    else (No)
+      :Reject medication order;
+      :Notify patient of invalid prescription;
+    endif
+
+  else (No)
+    :Cancel reserved slot;
+    :Notify patient of booking payment failure;
+  endif
+
+else (No)
+  :Notify patient of unavailable slot;
+endif
+
+|Patient|
+:Log out;
+stop
+
+@enduml
