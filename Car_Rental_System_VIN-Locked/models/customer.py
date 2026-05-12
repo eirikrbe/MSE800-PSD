@@ -1,5 +1,5 @@
-
 from models.user import User
+
 
 class Customer(User):
     def __init__(self, full_name, email, password_hash, phone=None, user_id=None, created_at=None):
@@ -12,5 +12,3 @@ class Customer(User):
             user_id,
             created_at
         )
-
-    

@@ -1,0 +1,74 @@
+
+# Car-related queries.py
+
+def add_car(db_manager, vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period):
+    query = """
+        INSERT INTO cars (vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """
+    cursor = db_manager.execute_query(query, (vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period))
+    return cursor.lastrowid
+
+def get_car_by_vin(db_manager, vin):
+    query = "SELECT * FROM cars WHERE vin = ?"
+    return db_manager.fetch_one(query, (vin,))
+
+def get_car_by_id(db_manager, car_id):
+    query = "SELECT * FROM cars WHERE car_id = ?"
+    return db_manager.fetch_one(query, (car_id,))
+
+def get_all_cars(db_manager):
+    query = "SELECT * FROM cars"
+    return db_manager.fetch_all(query)
+
+def update_car_status(db_manager, car_id, new_status):
+    allowed_statuses = ['locked', 'rented', 'available']
+    if new_status not in allowed_statuses:
+        raise ValueError(f"Invalid status: {new_status}. Allowed statuses are: {allowed_statuses}")
+    query = "UPDATE cars SET status = ? WHERE car_id = ?"
+    db_manager.execute_query(query, (new_status, car_id))
+    return True
+
+def update_car(db_manager, car_id, make=None, model=None, year=None, mileage=None, daily_rate=None, min_rent_period=None, max_rent_period=None):
+    fields = []
+    params = []
+    if make is not None:
+        fields.append("make = ?")
+        params.append(make)
+    if model is not None:
+        fields.append("model = ?")
+        params.append(model)
+    if year is not None:
+        fields.append("year = ?")
+        params.append(year)
+    if mileage is not None:
+        current_car = get_car_by_id(db_manager, car_id)
+        if current_car is None:
+            raise ValueError(f"Car with ID {car_id} does not exist.")
+        if mileage < current_car["mileage"]:
+            raise ValueError(f"New mileage {mileage} cannot be less than current mileage {current_car['mileage']}.")
+        fields.append("mileage = ?")
+        params.append(mileage)
+    if daily_rate is not None:
+        fields.append("daily_rate = ?")
+        params.append(daily_rate)
+    if min_rent_period is not None:
+        fields.append("min_rent_period = ?")
+        params.append(min_rent_period)
+    if max_rent_period is not None:
+        fields.append("max_rent_period = ?")
+        params.append(max_rent_period)
+
+    if not fields:
+        raise ValueError("No fields to update.")
+
+    params.append(car_id)
+    query = f"UPDATE cars SET {', '.join(fields)} WHERE car_id = ?"
+    db_manager.execute_query(query, tuple(params))
+    return True
+
+def delete_car(db_manager, car_id):
+    query = "DELETE FROM cars WHERE car_id = ?"
+    db_manager.execute_query(query, (car_id,))
+    return True
+
