@@ -1,6 +1,8 @@
 import sqlite3
 import os
 
+from httpx import delete
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "car_rental.db"))
 
@@ -73,7 +75,8 @@ class DatabaseManager:
         except sqlite3.Error as e:
             raise Exception(f"Error creating tables: {e}")
 
-        
+# General method to execute queries with error handling
+
     def execute_query(self, query, params=None):
         try:
             cursor = self.connection.cursor()
@@ -100,6 +103,8 @@ class DatabaseManager:
         except sqlite3.Error as e:
             raise Exception(f"Error fetching records: {e}")
 
+# User-related methods
+
     def add_user(self, full_name, email, phone, password_hash, role):
         query = """
             INSERT INTO users (full_name, email, phone, password_hash, role)
@@ -112,23 +117,113 @@ class DatabaseManager:
         query = "SELECT * FROM users WHERE email = ?"
         return self.fetch_one(query, (email,))
 
+# Car-related methods
 
+    def add_car(self, vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period):
+        query = """
+            INSERT INTO cars (vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        cursor = self.execute_query(query, (vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period))
+        return cursor.lastrowid
+
+    def get_car_by_vin(self, vin):
+        query = "SELECT * FROM cars WHERE vin = ?"
+        return self.fetch_one(query, (vin,))
+    
+    def get_car_by_id(self, car_id):
+        query = "SELECT * FROM cars WHERE car_id = ?"
+        return self.fetch_one(query, (car_id,))
+    
+    def get_all_cars(self):
+        query = "SELECT * FROM cars"
+        return self.fetch_all(query)
+    
+    def update_car_status(self, car_id, new_status):
+        allowed_statuses = ['locked', 'rented', 'available']
+        if new_status not in allowed_statuses:
+            raise ValueError(f"Invalid status: {new_status}. Allowed statuses are: {allowed_statuses}")
+        query = "UPDATE cars SET status = ? WHERE car_id = ?"
+        self.execute_query(query, (new_status, car_id))
+        return True
+    
+    def update_car(self, car_id, make=None, model=None, year=None, mileage=None, daily_rate=None, min_rent_period=None, max_rent_period=None):
+        fields = []
+        params = []
+        if make is not None:
+            fields.append("make = ?")
+            params.append(make)
+        if model is not None:
+            fields.append("model = ?")
+            params.append(model)
+        if year is not None:
+            fields.append("year = ?")
+            params.append(year)
+        if mileage is not None:
+            current_car = self.get_car_by_id(car_id)
+            if current_car is None:
+                raise ValueError(f"Car with ID {car_id} does not exist.")
+            if mileage < current_car["mileage"]:
+                raise ValueError(f"New mileage {mileage} cannot be less than current mileage {current_car['mileage']}.")
+            fields.append("mileage = ?")
+            params.append(mileage)
+        if daily_rate is not None:
+            fields.append("daily_rate = ?")
+            params.append(daily_rate)
+        if min_rent_period is not None:
+            fields.append("min_rent_period = ?")
+            params.append(min_rent_period)
+        if max_rent_period is not None:
+            fields.append("max_rent_period = ?")
+            params.append(max_rent_period)
+
+        if not fields:
+            raise ValueError("No fields to update.")
+
+        params.append(car_id)
+        query = f"UPDATE cars SET {', '.join(fields)} WHERE car_id = ?"
+        self.execute_query(query, tuple(params))
+        return True
+    
+    def delete_car(self, car_id):
+        query = "DELETE FROM cars WHERE car_id = ?"
+        self.execute_query(query, (car_id,))
+        return True
 
 if __name__ == "__main__":
     db = DatabaseManager()
-
-    # Test add_user
-    user_id = db.add_user(
-        full_name="customer test",
-        email="test@test.com",
-        phone="123456789",
-        password_hash="fake_123",
-        role="customer"
+    '''
+    # Test car insertion2
+    car_id = db.add_car(
+        vin="test2vin123456789",
+        make="TestMake2",
+        model="testmodel2",
+        year=2020,
+        mileage=15000,
+        daily_rate=49.99,
+        min_rent_period=1,
+        max_rent_period=30
     )
-    print(f"Inserted user with ID: {user_id}")
+    print(f"Inserted car with ID: {car_id}")
+    
+  
+    db.update_car_status(car_id, "locked")
+    car = db.get_car_by_id(car_id)
+    print(f"Updated car status: {car['status']}")
 
-    # Test get_user_by_email
-    user = db.get_user_by_email("test@test.com")
-    print(f"Found user: {user['full_name']}, role: {user['role']}")
+    db.update_car(car_id, mileage=16000, daily_rate=59.99)
+    car = db.get_car_by_id(car_id)
+    print(f"Updated car mileage: {car['mileage']}, daily rate: {car['daily_rate']}")
+
+    db.update_car(car_id, mileage=14000)
+    '''
+    car_id = 4
+    db.delete_car(car_id)
+    deleted_car = db.get_car_by_id(car_id)
+
+    if deleted_car is None:
+        print("Car successfully deleted.")
+    else:        
+        print("Car deletion failed.")
 
     db.disconnect()
