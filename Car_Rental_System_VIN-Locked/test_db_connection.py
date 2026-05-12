@@ -1,3 +1,4 @@
+
 from database.database_manager import DatabaseManager
 
 from database.car_queries import (
@@ -16,6 +17,15 @@ from database.user_queries import (
     get_user_by_id
 )
 
+from database.booking_queries import (
+    add_booking,
+    get_booking_by_id,
+    get_bookings_by_customer,
+    get_bookings_by_car,
+    get_bookings_by_status,
+    get_all_bookings,
+    update_booking_status
+)
 
 def test_database_connection():
     print("\n--- Testing database connection ---")
@@ -32,9 +42,9 @@ def test_database_connection():
 
     car_id = add_car(
         db,
-        vin="test2vin123456789",
-        make="TestMake2",
-        model="testmodel2",
+        vin="test6vin123456789",
+        make="TestMake6",
+        model="testmode6",
         year=2020,
         mileage=15000,
         daily_rate=49.99,
@@ -47,7 +57,7 @@ def test_database_connection():
     car = get_car_by_id(db, car_id)
     print("Retrieved car by ID:", dict(car))
 
-    car_by_vin = get_car_by_vin(db, "test2vin123456789")
+    car_by_vin = get_car_by_vin(db, "test6vin123456789")
     print("Retrieved car by VIN:", dict(car_by_vin))
 
     update_car_status(db, car_id, "locked")
@@ -73,13 +83,6 @@ def test_database_connection():
     else:
         print("No cars found.")
 
-    delete_car(db, car_id)
-    deleted_car = get_car_by_id(db, car_id)
-
-    if deleted_car is None:
-        print("Car successfully deleted.")
-    else:
-        print("Car deletion failed.")
 
     # -----------------------------
     # TEST USER QUERIES
@@ -88,20 +91,69 @@ def test_database_connection():
 
     customer_id = add_user(
         db,
-        full_name="Customer2",
-        email="customer2@example.com",
+        full_name="Customer6",
+        email="customer6@example.com",
         phone="555-5678",
-        password_hash="customer2_fake_hash",
+        password_hash="customer6_fake_hash",
         role="customer"
     )
 
     print(f"Inserted user with ID: {customer_id}")
 
-    user_by_email = get_user_by_email(db, "customer2@example.com")
+    user_by_email = get_user_by_email(db, "customer6@example.com")
     print(f"Retrieved user by email: {user_by_email['full_name']}")
 
     user_by_id = get_user_by_id(db, customer_id)
     print(f"Retrieved user by ID: {user_by_id['full_name']}")
+
+    # -----------------------------
+    # TEST BOOKING QUERIES
+    # -----------------------------
+    print("\n--- Testing booking queries ---")
+    
+    booking_id = add_booking(
+        db,
+        customer_id=customer_id,
+        car_id=car_id,
+        start_date="2024-07-01",
+        end_date="2024-07-05",
+        total_fee=199.95,
+        status="pending"
+    )
+
+    print(f"Inserted booking with ID: {booking_id}")
+
+    booking = get_booking_by_id(db, booking_id)
+    print("Retrieved booking by ID:", dict(booking))
+
+    bookings_by_customer = get_bookings_by_customer(db, customer_id)    
+    print("Retrieved bookings by customer:")
+
+    for booking in bookings_by_customer:
+        print(dict(booking))
+
+    bookings_by_car = get_bookings_by_car(db, car_id)
+    print("Retrieved bookings by car:")
+    for booking in bookings_by_car:
+        print(dict(booking))
+    
+    bookings_by_status = get_bookings_by_status(db, "pending")
+    print("Retrieved bookings by status:")
+    for booking in bookings_by_status:
+        print(dict(booking))
+
+    update_booking_status(db, booking_id, "approved")
+    booking = get_booking_by_id(db, booking_id)
+    print(f"Updated booking status: {booking['status']}")
+
+
+    bookings = get_all_bookings(db)
+    print("\nBookings table query result:")
+    if bookings:
+        for booking in bookings:
+            print(dict(booking))
+    else:
+        print("No bookings found.")
 
     # -----------------------------
     # TEST DISCONNECT
