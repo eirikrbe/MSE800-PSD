@@ -8,7 +8,6 @@ from database.car_queries import (
     get_car_by_vin,
     update_car_status,
     update_car,
-    delete_car
 )
 
 from database.user_queries import (

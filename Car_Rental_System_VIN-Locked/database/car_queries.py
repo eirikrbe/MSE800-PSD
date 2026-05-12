@@ -1,5 +1,11 @@
 
-# Car-related queries.py
+# Car_queries.py
+
+ALLOWED_CAR_STATUSES = ["available", "locked", "rented"]
+
+def validate_car_status(status):
+    if status not in ALLOWED_CAR_STATUSES:
+        raise ValueError(f"Invalid car status: {status}. Allowed statuses are: {ALLOWED_CAR_STATUSES}")
 
 def add_car(db_manager, vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period):
     query = """
@@ -21,12 +27,17 @@ def get_all_cars(db_manager):
     query = "SELECT * FROM cars"
     return db_manager.fetch_all(query)
 
+def get_cars_by_status(db_manager, status):
+    validate_car_status(status)
+    query = "SELECT * FROM cars WHERE status = ?"
+    return db_manager.fetch_all(query, (status,))
+
 def update_car_status(db_manager, car_id, new_status):
-    allowed_statuses = ['locked', 'rented', 'available']
-    if new_status not in allowed_statuses:
-        raise ValueError(f"Invalid status: {new_status}. Allowed statuses are: {allowed_statuses}")
+    validate_car_status(new_status)
     query = "UPDATE cars SET status = ? WHERE car_id = ?"
-    db_manager.execute_query(query, (new_status, car_id))
+    cursor = db_manager.execute_query(query, (new_status, car_id))
+    if cursor.rowcount == 0:
+        raise ValueError(f"Car with ID {car_id} does not exist.")
     return True
 
 def update_car(db_manager, car_id, make=None, model=None, year=None, mileage=None, daily_rate=None, min_rent_period=None, max_rent_period=None):
@@ -64,11 +75,15 @@ def update_car(db_manager, car_id, make=None, model=None, year=None, mileage=Non
 
     params.append(car_id)
     query = f"UPDATE cars SET {', '.join(fields)} WHERE car_id = ?"
-    db_manager.execute_query(query, tuple(params))
+    cursor = db_manager.execute_query(query, tuple(params))
+    if cursor.rowcount == 0:
+        raise ValueError(f"Car with ID {car_id} does not exist.")
     return True
 
 def delete_car(db_manager, car_id):
     query = "DELETE FROM cars WHERE car_id = ?"
-    db_manager.execute_query(query, (car_id,))
+    cursor = db_manager.execute_query(query, (car_id,))
+    if cursor.rowcount == 0:
+        raise ValueError(f"Car with ID {car_id} does not exist.")
     return True
 
