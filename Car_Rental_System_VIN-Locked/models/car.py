@@ -1,4 +1,6 @@
 
+# car.py
+
 from datetime import datetime
 
 
@@ -33,6 +35,23 @@ class Car:
             "total_booking_attempts": self.total_booking_attempts,
             "total_conflicts": self.total_conflicts
         }
+    
+    @classmethod
+    def from_row(cls, row):
+        return cls(
+            car_id=row["car_id"],
+            vin=row["vin"],
+            make=row["make"],
+            model=row["model"],
+            year=row["year"],
+            mileage=row["mileage"],
+            daily_rate=row["daily_rate"],
+            status=row["status"],
+            min_rent_period=row["min_rent_period"],
+            max_rent_period=row["max_rent_period"],
+            total_booking_attempts=row["total_booking_attempts"],
+            total_conflicts=row["total_conflicts"]
+        )
     
     def is_rent_period_valid(self, start_date, end_date):
         start = datetime.strptime(start_date, "%Y-%m-%d").date()
