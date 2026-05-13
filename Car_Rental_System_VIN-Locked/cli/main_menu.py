@@ -3,7 +3,7 @@
 
 from cli.admin_menu import admin_menu
 from cli.customer_menu import customer_menu
-from cli.input_helpers import ask_int, ask_date, ask_text
+from cli.input_helpers import ask_int, ask_text
 
 def main_menu(auth_service, booking_service, fleet_manager):
     while True:

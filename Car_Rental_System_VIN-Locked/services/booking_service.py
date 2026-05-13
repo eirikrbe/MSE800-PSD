@@ -4,7 +4,7 @@
 
 from models.car import Car
 from models.booking import Booking
-from database.booking_queries import add_booking, update_booking_status, get_booking_by_id
+from database.booking_queries import add_booking, get_bookings_by_customer, update_booking_status, get_booking_by_id
 
 
 class BookingService:
@@ -118,5 +118,8 @@ class BookingService:
         updated_booking = get_booking_by_id(self.db_manager, booking_id)
         
         return updated_booking
+    
+    def get_customer_bookings(self, customer_id):
+        return get_bookings_by_customer(self.db_manager, customer_id)
 
         

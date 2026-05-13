@@ -1,14 +1,22 @@
 
-
 #customer_menu.py
 
+
 from cli.input_helpers import ask_int, ask_date
+from cli.display_helpers import (
+    clear_screen,
+    pause,
+    display_title,
+    display_success,
+    display_error,
+    display_available_cars,
+    display_customer_bookings
+)
 
 def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
     while True:
-        print("\n========================================")
-        print("  Customer Menu")
-        print("========================================")
+        clear_screen()
+        display_title("Customer Menu")
         print("1. View Available Cars")
         print("2. Make a Booking")
         print("3. View My Bookings")
@@ -18,38 +26,22 @@ def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
         choice = ask_int("\nSelect an option: ")
 
         if choice == 1:
+            clear_screen()
             available_cars = fleet_manager.get_available_cars()
-            if available_cars:
-                print("\nAvailable Cars:")
-                print("ID | Make / Model | Year | Mileage | Rate | Status | Rent Window")
-                for car in available_cars:
-                    print(
-                        f"{car['car_id']} | {car['make']} {car['model']} | {car['year']} | "
-                        f"{car['mileage']} km | ${car['daily_rate']:.2f}/day | {car['status']} | "
-                        f"{car['min_rent_period']}-{car['max_rent_period']} days"
-                    )
-            else:
-                print("No cars available at the moment.")
+            display_available_cars(available_cars)
+            pause()
+
 
         elif choice == 2:
             try:
+                clear_screen()
                 available_cars = fleet_manager.get_available_cars()
-                if available_cars:
-                    print("\nAvailable Cars:")
-                    print("ID | Make / Model | Year | Mileage | Rate | Status | Rent Window")
-                    for car in available_cars:
-                        print(
-                            f"{car['car_id']} | {car['make']} {car['model']} | {car['year']} | "
-                            f"{car['mileage']} km | ${car['daily_rate']:.2f}/day | {car['status']} | "
-                            f"{car['min_rent_period']}-{car['max_rent_period']} days"
-                        )
-                else:
-                    print("No cars available at the moment.")
-                    continue
 
-                print("\n========================================")
-                print("\nEnter booking details:")
-                print("\n========================================")
+                if not display_available_cars(available_cars):
+                    pause() 
+                    continue
+                
+                display_title("Enter Booking Details")
 
                 car_id = ask_int("Enter car ID: ")
                 start_date = ask_date("Enter start date (YYYY-MM-DD): ")
@@ -62,15 +54,55 @@ def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
                     end_date
                 )
 
-                print(f"Booking request created successfully. Booking ID: {booking_id}")
+                display_success(f"Booking request created successfully. Booking ID: {booking_id}")
+                pause()
 
             except ValueError as e:
-                print(f"Booking failed: {e}")
+                display_error(f"Booking failed: {e}")
+                pause()
                 continue
 
 
+        elif choice == 3:
+            try:
+                bookings = booking_service.get_customer_bookings(logged_in_user.user_id)
+                display_customer_bookings(bookings, fleet_manager)
+                pause()
+
+            except ValueError as e:
+                display_error(f"Error retrieving bookings: {e}")
+                pause()
+                continue
+
+
+        elif choice == 4:
+            try:
+                bookings = booking_service.get_customer_bookings(logged_in_user.user_id)
+
+                if not display_customer_bookings(bookings, fleet_manager):
+                    pause()
+                    continue
+
+                booking_id = ask_int("\nEnter the booking ID to cancel: ")
+
+                if booking_id not in [b["booking_id"] for b in bookings]:
+                    display_error(f"Booking ID {booking_id} is not in your bookings.")
+                    pause()
+                    continue
+
+                booking_service.process_booking_cancellation(booking_id)
+
+                display_success(f"Booking ID {booking_id} has been cancelled successfully.")
+                pause()
+
+            except ValueError as e:
+                display_error(f"Cancellation failed: {e}")
+                pause()
+                continue
+
         elif choice == 0:
-            print("Goodbye!")
+            display_success("Goodbye!")
             break
         else:
-            print("Invalid option. Please try again.")
+            display_error("Invalid option. Please try again.")
+            pause()
