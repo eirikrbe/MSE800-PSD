@@ -18,7 +18,7 @@ def main():
         "Python Decorator Project"
     )
 
-    view_grades("Alex")
+    view_grades("Mohammad")
 
 
 if __name__ == "__main__":

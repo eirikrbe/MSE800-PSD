@@ -11,5 +11,7 @@ The main purpose of `log_activity()` is to record and display activity informati
 
 The decorator uses `*args` and `**kwargs` to capture the function arguments. `*args` is used for positional arguments, while `**kwargs` is used for keyword arguments. This makes the decorator flexible because it can be applied to different functions, even if they receive different types or numbers of arguments.
 
+The program had a logic bug in `main.py`. The program used `student_login("Mohammad")` and `submit_assignment("Mohammad", "Python Decorator Project")`, but then called `view_grades("Alex")`.
+
 
 ![W6Act1](image.png)
