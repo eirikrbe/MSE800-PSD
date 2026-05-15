@@ -1,6 +1,8 @@
 from decorators import log_activity
 
-
+'''
+these are the decorated functions which their main purpose is to display message
+'''
 @log_activity
 def student_login(username):
     print(f"{username} logged into the system.")
