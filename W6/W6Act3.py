@@ -42,4 +42,4 @@ if __name__ == "__main__":
     }
 
     
-    print(merged_dict)
+    print(merged_dict["name"])
