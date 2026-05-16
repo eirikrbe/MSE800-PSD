@@ -1,4 +1,4 @@
-# Zoo Admin Login System
+# W6 Activity 2 - Zoo Admin Login System
 
 ## Overview
 
