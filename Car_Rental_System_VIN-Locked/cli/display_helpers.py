@@ -48,13 +48,12 @@ def display_available_cars(cars):
     return True
 
 
-def display_customer_bookings(bookings, fleet_manager):
+def display_bookings(bookings, fleet_manager, title="Bookings"):
     if not bookings:
-        display_info("You have no bookings.")
+        display_info(f"No {title.lower()} found.")
         return False
-    
     print()
-    print("\nMy Bookings:") 
+    print(f"\n{title}")
     print()
     print("ID | Car | Dates | Status | Fee")
 

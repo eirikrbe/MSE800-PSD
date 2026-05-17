@@ -22,3 +22,7 @@ def get_user_by_email(db_manager, email):
 def get_user_by_id(db_manager, user_id):
     query = "SELECT * FROM users WHERE user_id = ?"
     return db_manager.fetch_one(query, (user_id,))
+
+def admin_exists(db_manager):
+    query = "SELECT 1 FROM users WHERE role = 'admin' LIMIT 1"
+    return db_manager.fetch_one(query) is not None

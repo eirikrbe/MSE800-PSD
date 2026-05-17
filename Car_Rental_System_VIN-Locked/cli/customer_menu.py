@@ -10,7 +10,7 @@ from cli.display_helpers import (
     display_success,
     display_error,
     display_available_cars,
-    display_customer_bookings
+    display_bookings
 )
 
 def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
@@ -66,7 +66,7 @@ def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
         elif choice == 3:
             try:
                 bookings = booking_service.get_customer_bookings(logged_in_user.user_id)
-                display_customer_bookings(bookings, fleet_manager)
+                display_bookings(bookings, fleet_manager, "My Bookings")
                 pause()
 
             except ValueError as e:
@@ -79,7 +79,7 @@ def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
             try:
                 bookings = booking_service.get_customer_bookings(logged_in_user.user_id)
 
-                if not display_customer_bookings(bookings, fleet_manager):
+                if not display_bookings(bookings, fleet_manager, "My Bookings"):
                     pause()
                     continue
 

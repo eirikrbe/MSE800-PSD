@@ -3,6 +3,10 @@
 
 ALLOWED_CAR_STATUSES = ["available", "locked", "rented"]
 
+def car_exists(db_manager):
+    query = "SELECT 1 FROM cars LIMIT 1"
+    return db_manager.fetch_one(query) is not None
+
 def validate_car_status(status):
     if status not in ALLOWED_CAR_STATUSES:
         raise ValueError(f"Invalid car status: {status}. Allowed statuses are: {ALLOWED_CAR_STATUSES}")

@@ -10,6 +10,9 @@ ALLOWED_STATUSES = [
     "completed"
 ]
 
+def booking_exists(db_manager):
+    query = "SELECT 1 FROM bookings LIMIT 1"
+    return db_manager.fetch_one(query) is not None
 
 def validate_booking_status(status):
     if status not in ALLOWED_STATUSES:

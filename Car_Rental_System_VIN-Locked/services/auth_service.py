@@ -1,7 +1,9 @@
+
+#auth_service.py
+
 import bcrypt
 from services.user_factory import UserFactory
-from database.database_manager import DatabaseManager
-from database.user_queries import add_user, get_user_by_email
+from database.user_queries import add_user, get_user_by_email, admin_exists
 
 
 class AuthService:
@@ -19,8 +21,18 @@ class AuthService:
         raw_password = password.encode("utf-8")
         stored_hash = stored_hash.encode("utf-8")
         return bcrypt.checkpw(raw_password, stored_hash)
+    
+    def admin_exists(self):
+        return admin_exists(self.db_manager)
+    
+    def user_exists(self, email):
+        user = get_user_by_email(self.db_manager, email)
+        return user is not None
+    
+    def get_user_by_email(self, email):
+        return get_user_by_email(self.db_manager, email)
 
-    def register_user(self, full_name, email, password, role, phone=None):
+    def register_user(self, full_name, email, password, phone=None, role="customer"):
         existing = get_user_by_email(self.db_manager, email)
 
         if existing:
@@ -68,27 +80,4 @@ class AuthService:
 
         return None
 
-if __name__ == "__main__":
-
-    db = DatabaseManager()
-    auth_service = AuthService(db)
-
-    # Run this only once, then comment it again because email is UNIQUE
-    auth_service.register_user(
-         "Test User4",
-         "test4@example.com",
-         "password123",
-         "customer",
-         "1234567890"
-     )
-
-    user = auth_service.login("test4@example.com", "password123")
-
-    if user:
-        print("Login successful!")
-        print(user.get_user_details())
-    else:
-        print("Login failed.")
-
-    db.disconnect()
-    
+   

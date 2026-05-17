@@ -4,7 +4,14 @@
 
 from models.car import Car
 from models.booking import Booking
-from database.booking_queries import add_booking, get_bookings_by_customer, update_booking_status, get_booking_by_id
+from database.booking_queries import (
+    add_booking,
+    get_bookings_by_customer,
+    update_booking_status,
+    get_booking_by_id,
+    get_bookings_by_status,
+    booking_exists as db_booking_exists
+)
 
 
 class BookingService:
@@ -12,6 +19,9 @@ class BookingService:
         self.db_manager = db_manager
         self.fleet_manager = fleet_manager
         self.rental_fee_calculator = rental_fee_calculator
+
+    def booking_exists(self):
+        return db_booking_exists(self.db_manager)
 
     def request_booking(self, customer_id, car_id, start_date, end_date):
 
@@ -121,5 +131,8 @@ class BookingService:
     
     def get_customer_bookings(self, customer_id):
         return get_bookings_by_customer(self.db_manager, customer_id)
+
+    def get_bookings_by_status(self, status):
+        return get_bookings_by_status(self.db_manager, status)
 
         

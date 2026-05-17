@@ -24,3 +24,11 @@ def ask_text(prompt):
         if value:
             return value
         print("This field cannot be empty.")
+
+
+def ask_float(prompt):
+    while True:
+        try:
+            return float(input(prompt).strip())
+        except ValueError:
+            print("Please enter a valid number.")

@@ -43,15 +43,11 @@ def main_menu(auth_service, booking_service, fleet_manager):
             full_name = ask_text("Full Name: ")
             email = ask_text("Email: ")
             password = ask_text("Password: ")
-            role = ask_text("Role (customer/admin): ")
-            if role not in ['customer', 'admin']:
-                print("Invalid role. Please enter 'customer' or 'admin'.")
-                continue
             phone = ask_text("Phone Number: ")
 
-            register_user = auth_service.register_user(full_name, email, password, role, phone)
+            register_user = auth_service.register_user(full_name, email, password, phone)
             if register_user:
-                print(f"\nRegistration successful! Welcome, {full_name}! as a {role}.")
+                print(f"\nRegistration successful! Welcome, {full_name}! Your customer account has been created")
             else:
                 print("Registration failed. Please check your details and try again.")
 
