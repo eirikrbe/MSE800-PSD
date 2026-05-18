@@ -9,7 +9,7 @@ from cli.display_helpers import (
     display_title,
     display_success,
     display_error,
-    display_available_cars,
+    display_cars,
     display_bookings
 )
 
@@ -28,7 +28,7 @@ def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
         if choice == 1:
             clear_screen()
             available_cars = fleet_manager.get_available_cars()
-            display_available_cars(available_cars)
+            display_cars(available_cars)
             pause()
 
 
@@ -37,7 +37,7 @@ def customer_menu(logged_in_user, auth_service, booking_service, fleet_manager):
                 clear_screen()
                 available_cars = fleet_manager.get_available_cars()
 
-                if not display_available_cars(available_cars):
+                if not display_cars(available_cars):
                     pause() 
                     continue
                 

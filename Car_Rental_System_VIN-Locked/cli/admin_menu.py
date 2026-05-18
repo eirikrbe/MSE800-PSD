@@ -5,11 +5,13 @@
 from cli.input_helpers import ask_int, ask_float, ask_text
 from cli.display_helpers import (
     clear_screen,
+    display_info,
     pause,
     display_title,
     display_success,
     display_error,
-    display_bookings
+    display_bookings,
+    display_cars
 )
 
 
@@ -129,8 +131,84 @@ def admin_menu(logged_in_user, auth_service, booking_service, fleet_manager):
 
             except ValueError as e:
                 display_error(str(e))
-                pause()
+            pause()
 
+        elif choice == 7:
+            try:
+                clear_screen()
+                display_title("Update Car")
+                cars = fleet_manager.get_all_cars()
+
+                if not display_cars(cars):
+                    pause() 
+                    continue    
+
+                car_id = ask_int("\nEnter the Car ID to Update: ")
+
+                make = input("New make (press Enter to skip): ").strip() or None
+                model = input("New model (press Enter to skip): ").strip() or None
+                year_input = input("New year (press Enter to skip): ").strip()
+                year = int(year_input) if year_input else None
+                mileage_input = input("New mileage (press Enter to skip): ").strip()
+                mileage = int(mileage_input) if mileage_input else None
+                daily_rate_input = input("New daily rate (press Enter to skip): ").strip()
+                daily_rate = float(daily_rate_input) if daily_rate_input else None
+                min_rent_input = input("New minimum rent period (press Enter to skip): ").strip()
+                min_rent_period = int(min_rent_input) if min_rent_input else None
+                max_rent_input = input("New maximum rent period (press Enter to skip): ").strip()
+                max_rent_period = int(max_rent_input) if max_rent_input else None
+
+                if not any([make, model, year, mileage, daily_rate, min_rent_period, max_rent_period]):
+                    display_error("No fields to update.")
+                    pause()
+                    continue                
+                
+                fleet_manager.update_car(
+                    car_id,
+                    make=make,
+                    model=model,
+                    year=year,
+                    mileage=mileage,
+                    daily_rate=daily_rate,
+                    min_rent_period=min_rent_period,
+                    max_rent_period=max_rent_period
+                )
+
+                display_success(f"Car ID {car_id} updated successfully.")
+
+            except ValueError as e:
+                display_error(str(e))
+            pause()
+
+
+        elif choice == 8:
+            try:
+                clear_screen()  
+                display_title("Deleting a Car")
+                cars = fleet_manager.get_all_cars()
+
+                if not display_cars(cars):
+                    pause() 
+                    continue    
+
+                car_id = ask_int("\nEnter the Car ID to delete: ")
+                delete_option = input(f"Are you sure you want to delete car ID {car_id}? (y/n): ").strip().lower()
+
+                if delete_option == "y":
+                    fleet_manager.delete_car(car_id)
+                    display_success(f"Car ID {car_id} deleted successfully.")
+                    pause()
+                elif delete_option == "n":
+                    display_info("Delete cancelled.")
+                    pause()
+                else:
+                    display_error("Invalid option. Delete cancelled.")
+                    pause()
+  
+            except ValueError as e:
+                display_error(str(e))
+            pause()
+         
         elif choice == 0:
             display_success("Goodbye!")
             break

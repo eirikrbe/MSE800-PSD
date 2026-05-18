@@ -12,6 +12,7 @@ from cli.main_menu import main_menu
 
 
 def main():
+    
     db = DatabaseManager()
     fleet_manager = FleetManager.get_instance(db)
     rental_fee_calculator = RentalFeeCalculator()
@@ -23,8 +24,6 @@ def main():
         print("Default admin account created.")
         print("Email: admin")
         print("Password: admin")
-    else:
-        print("Admin account already exists.")
 
     if setup_result["customer"]:
         print("Demo customer account created.")
@@ -33,16 +32,17 @@ def main():
 
     if setup_result["cars"]:
         print("Default cars created.")
-    else:
-        print("Default cars already exist.")
 
     if setup_result["booking"]:
         print("Default booking created.")
         
     try:
+
         main_menu(auth_service, booking_service, fleet_manager)
+
     finally:
         db.disconnect()
 
 if __name__ == "__main__":
+
     main()

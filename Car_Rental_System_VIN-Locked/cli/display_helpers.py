@@ -1,4 +1,6 @@
 
+#display_helpers.py
+
 import os
 import platform
 
@@ -29,7 +31,7 @@ def display_info(message):
     print(f"\n[INFO] {message}")
 
 
-def display_available_cars(cars):
+def display_cars(cars):
     if not cars:
         display_info("No cars available at the moment.")
         return False

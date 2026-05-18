@@ -3,7 +3,6 @@
 
 from datetime import date, timedelta
 
-
 admin = {
     "full_name": "System Admin",
     "email": "admin",
@@ -27,8 +26,6 @@ cars = [
     ("SEEDVIN004", "Nissan", "X-Trail", 2022, 35000, 85.00, 2, 30),
     ("SEEDVIN005", "Suzuki", "Swift", 2018, 70000, 45.00, 1, 14),
 ]
-
-
 
 def run_app_setup(auth_service, fleet_manager, booking_service):
 
