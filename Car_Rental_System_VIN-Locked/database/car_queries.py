@@ -91,3 +91,15 @@ def delete_car(db_manager, car_id):
         raise ValueError(f"Car with ID {car_id} does not exist.")
     return True
 
+'''
+confidence score
+'''
+
+def increment_booking_attempts(db_manager, car_id):
+    query = "UPDATE cars SET total_booking_attempts = total_booking_attempts + 1 WHERE car_id = ?"
+    db_manager.execute_query(query, (car_id,))
+
+def increment_total_conflicts(db_manager, car_id):
+    query = "UPDATE cars SET total_conflicts = total_conflicts + 1 WHERE car_id = ?"
+    db_manager.execute_query(query, (car_id,))
+

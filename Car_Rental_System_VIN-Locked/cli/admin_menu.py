@@ -15,7 +15,7 @@ from cli.display_helpers import (
 )
 
 
-def admin_menu(logged_in_user, auth_service, booking_service, fleet_manager):
+def admin_menu(booking_service, fleet_manager):
     while True:
         clear_screen()
         display_title("Admin Menu")
@@ -139,7 +139,7 @@ def admin_menu(logged_in_user, auth_service, booking_service, fleet_manager):
                 display_title("Update Car")
                 cars = fleet_manager.get_all_cars()
 
-                if not display_cars(cars):
+                if not display_cars(cars, fleet_manager):
                     pause() 
                     continue    
 
@@ -187,7 +187,7 @@ def admin_menu(logged_in_user, auth_service, booking_service, fleet_manager):
                 display_title("Deleting a Car")
                 cars = fleet_manager.get_all_cars()
 
-                if not display_cars(cars):
+                if not display_cars(cars, fleet_manager):
                     pause() 
                     continue    
 

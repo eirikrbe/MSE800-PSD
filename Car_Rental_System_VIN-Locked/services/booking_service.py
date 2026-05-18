@@ -25,25 +25,50 @@ class BookingService:
 
     def request_booking(self, customer_id, car_id, start_date, end_date):
 
-        car = Car.from_row(self.fleet_manager.get_car_by_id(car_id))
+        car_row = self.fleet_manager.get_car_by_id(car_id)
+
+        if not car_row:
+            raise ValueError(f"Car with ID {car_id} does not exist.")
+
+        car = Car.from_row(car_row)
 
         if not self.fleet_manager.check_car_availability(car_id):
             raise ValueError(f"Car with ID {car_id} is not available for booking.")
-        if self.fleet_manager.check_date_conflict(car_id, start_date, end_date):
-            raise ValueError(f"Car with ID {car_id} has a conflicting booking during the requested dates.")
-        
+
         if not car.is_rent_period_valid(start_date, end_date):
-            raise ValueError("Requested rental period does not meet the car's minimum and maximum rent period requirements.")
-        
+            raise ValueError(
+                "Requested rental period does not meet the car's minimum and maximum rent period requirements."
+            )
+
+        self.fleet_manager.record_booking_attempt(car_id)
+
+        if self.fleet_manager.check_date_conflict(car_id, start_date, end_date):
+            raise ValueError(
+                f"Car with ID {car_id} has a conflicting booking during the requested dates."
+            )
 
         booking = Booking(customer_id, car_id, start_date, end_date, "pending")
 
         total_booking_fee = self.rental_fee_calculator.calculate_fee(car.daily_rate, booking)
         booking.total_fee = total_booking_fee
+        '''
+        Future improvement: wrap vehicle locking and booking creation in a database transaction.
+        Locking first reduces the risk of double-booking, but if booking creation fails,
+        the car may remain locked without a booking and require recovery handling.
+        '''
+        
+        self.fleet_manager.lock_vehicle(car_id)
 
-        self.fleet_manager.lock_vehicle(car_id) #Future improvement: wrap booking creation and vehicle locking in a database transaction to ensure atomicity.
+        booking_id = add_booking(
+            self.db_manager,
+            customer_id,
+            car_id,
+            start_date,
+            end_date,
+            total_booking_fee,
+            "pending"
+        )
 
-        booking_id = add_booking(self.db_manager, customer_id, car_id, start_date, end_date, total_booking_fee, "pending")
         return booking_id
     
     def process_booking_approval(self, booking_id):

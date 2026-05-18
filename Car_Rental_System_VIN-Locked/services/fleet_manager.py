@@ -7,12 +7,14 @@ from database.booking_queries import get_bookings_by_car
 from database.car_queries import (
     get_all_cars as db_get_all_cars,
     get_car_by_id,
+    increment_booking_attempts,
+    increment_total_conflicts,
     update_car_status,
     get_cars_by_status,
     add_car as db_add_car,
     get_car_by_vin,
     update_car as db_update_car,
-    delete_car as db_delete_car
+    delete_car as db_delete_car,
 )
 
 
@@ -93,6 +95,7 @@ class FleetManager:
             existing_start = datetime.strptime(booking["start_date"], "%Y-%m-%d")
             existing_end = datetime.strptime(booking["end_date"], "%Y-%m-%d")
             if (new_start < existing_end) and (new_end > existing_start):
+                self.record_conflict(car_id)
                 return True
         return False
 
@@ -178,4 +181,65 @@ class FleetManager:
             max_rent_period
         )
     
+    '''
+    confidence score
+    '''
 
+    def calculate_booking_reliability_score(self, car_id):
+        bookings = get_bookings_by_car(self.db_manager, car_id)
+        
+        completed = 0
+        total_relevant = 0
+        
+        for booking in bookings:
+            if booking["status"] == "rejected":
+                continue
+            total_relevant += 1
+            if booking["status"] == "completed":
+                completed += 1
+        
+        if total_relevant == 0:
+            return 75  # default for new cars
+        
+        return (completed / total_relevant) * 100
+    
+    def calculate_mileage_score(self, car):
+        mileage = car["mileage"]
+        return max(0, (1 - mileage / 200000) * 100)
+    
+    def calculate_vehicle_age_score(self, car):
+        current_year = datetime.now().year
+        age = current_year - car["year"]
+        return max(0, (1 - age / 20) * 100)
+    
+    def calculate_conflict_score(self, car):
+        attempts = car["total_booking_attempts"]
+        conflicts = car["total_conflicts"]
+        
+        if attempts == 0:
+            return 75  # default for new cars
+        
+        return min(100, max(0, (1 - conflicts / attempts) * 100))
+    
+    def calculate_confidence_score(self, car_id):
+        car = self.get_car_by_id(car_id)
+        
+        reliability = self.calculate_booking_reliability_score(car_id)
+        mileage = self.calculate_mileage_score(car)
+        age = self.calculate_vehicle_age_score(car)
+        conflict = self.calculate_conflict_score(car)
+        
+        score = (
+            reliability * 0.40 +
+            mileage     * 0.25 +
+            age         * 0.20 +
+            conflict    * 0.15
+        )
+        
+        return round(score, 1)
+    
+    def record_booking_attempt(self, car_id):
+        increment_booking_attempts(self.db_manager, car_id)
+
+    def record_conflict(self, car_id):
+        increment_total_conflicts(self.db_manager, car_id)

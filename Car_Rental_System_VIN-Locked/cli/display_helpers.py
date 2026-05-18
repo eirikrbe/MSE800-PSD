@@ -31,22 +31,28 @@ def display_info(message):
     print(f"\n[INFO] {message}")
 
 
-def display_cars(cars):
+def display_cars(cars, fleet_manager=None):
     if not cars:
-        display_info("No cars available at the moment.")
+        print("No cars available at the moment.")
         return False
-    print()
-    print("\nAvailable Cars:")
-    print()
-    print("ID | Make / Model | Year | Mileage | Rate | Status | Rent Window")
-
+    
+    if fleet_manager:
+        print("\nID | Make / Model | Year | Mileage | Rate | Rent Window | Score")
+    else:
+        print("\nID | Make / Model | Year | Mileage | Rate | Rent Window")
+    
     for car in cars:
-        print(
-            f"{car['car_id']} | {car['make']} {car['model']} | {car['year']} | "
-            f"{car['mileage']} km | ${car['daily_rate']:.2f}/day | "
-            f"{car['status']} | {car['min_rent_period']}-{car['max_rent_period']} days"
+        row = (
+            f"{car['car_id']} | {car['make']} {car['model']} | "
+            f"{car['year']} | {car['mileage']} km | "
+            f"${car['daily_rate']:.2f}/day | "
+            f"{car['min_rent_period']}-{car['max_rent_period']} days"
         )
-
+        if fleet_manager:
+            score = fleet_manager.calculate_confidence_score(car["car_id"])
+            row += f" | ⭐ {score}/100"
+        print(row)
+    
     return True
 
 
