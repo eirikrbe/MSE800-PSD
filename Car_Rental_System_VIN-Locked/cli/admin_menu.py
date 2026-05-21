@@ -14,7 +14,6 @@ from cli.display_helpers import (
     display_cars
 )
 
-
 def admin_menu(auth_service, booking_service, fleet_manager):
     while True:
         clear_screen()
@@ -24,19 +23,22 @@ def admin_menu(auth_service, booking_service, fleet_manager):
         print("3. Reject booking")
         print("4. Activate booking")
         print("5. Complete booking")
-        print("6. Add car")
-        print("7. Update car")
-        print("8. Delete car")
-        print("9. Register user as a Admin")
+        print("6. Cancel booking")
+        print("7. Add car")
+        print("8. Update car")
+        print("9. Delete car")
+        print("10. Register user as a Admin")
         print("0. Logout")
 
         choice = ask_int("\nSelect an option: ")
+
 
         if choice == 1:
             clear_screen()
             bookings = booking_service.get_bookings_by_status("pending")
             display_bookings(bookings, fleet_manager, "Pending Bookings")
             pause()
+
 
         elif choice == 2:
             try:
@@ -54,6 +56,7 @@ def admin_menu(auth_service, booking_service, fleet_manager):
                 display_error(str(e))
             pause()
 
+
         elif choice == 3:
             try:
                 clear_screen()
@@ -69,6 +72,7 @@ def admin_menu(auth_service, booking_service, fleet_manager):
             except ValueError as e:
                 display_error(str(e))
             pause()
+
 
         elif choice == 4:
             try:
@@ -86,6 +90,7 @@ def admin_menu(auth_service, booking_service, fleet_manager):
                 display_error(str(e))
             pause()
 
+
         elif choice == 5:
             try:
                 clear_screen()
@@ -102,7 +107,42 @@ def admin_menu(auth_service, booking_service, fleet_manager):
                 display_error(str(e))
             pause()
 
+
         elif choice == 6:
+            try:
+                clear_screen()  
+
+                pending_bookings = booking_service.get_bookings_by_status("pending")
+                approved_bookings = booking_service.get_bookings_by_status("approved")
+
+                cancellable_bookings = pending_bookings + approved_bookings
+
+                if not display_bookings(
+                    cancellable_bookings,
+                    fleet_manager,
+                    "Bookings Available for Cancellation"
+                ):
+                    pause()
+                    continue
+
+                booking_id = ask_int("\nEnter the booking ID to cancel: ")
+
+                if booking_id not in [b["booking_id"] for b in cancellable_bookings]:
+                    display_error(f"Booking ID {booking_id} is not available for cancellation.")
+                    pause()
+                    continue
+
+                booking_service.process_booking_cancellation(booking_id)
+
+                display_success(f"Booking ID {booking_id} cancelled successfully.")
+
+  
+            except ValueError as e:
+                display_error(str(e))
+            pause()
+
+
+        elif choice == 7:
             try:
                 clear_screen()
                 display_title("Add New Car")
@@ -134,7 +174,8 @@ def admin_menu(auth_service, booking_service, fleet_manager):
                 display_error(str(e))
             pause()
 
-        elif choice == 7:
+
+        elif choice == 8:
             try:
                 clear_screen()
                 display_title("Update Car")
@@ -182,7 +223,7 @@ def admin_menu(auth_service, booking_service, fleet_manager):
             pause()
 
 
-        elif choice == 8:
+        elif choice == 9:
             try:
                 clear_screen()  
                 display_title("Deleting a Car")
@@ -210,7 +251,8 @@ def admin_menu(auth_service, booking_service, fleet_manager):
                 display_error(str(e))
             pause()
 
-        elif choice == 9:
+
+        elif choice == 10:
             clear_screen()
             display_title("Create Admin Account")
 
@@ -238,7 +280,8 @@ def admin_menu(auth_service, booking_service, fleet_manager):
             except ValueError as e:
                 display_error(str(e))
                 pause()
-         
+
+
         elif choice == 0:
             display_success("Goodbye!")
             break
