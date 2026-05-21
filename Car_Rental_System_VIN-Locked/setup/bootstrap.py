@@ -20,11 +20,11 @@ customer = {
 }
 
 cars = [
-    ("SEEDVIN001", "Toyota", "Corolla", 2021, 20000, 50.00, 1, 30),
-    ("SEEDVIN002", "Mazda", "Axela", 2019, 62000, 55.00, 1, 21),
-    ("SEEDVIN003", "Honda", "Civic", 2020, 48000, 60.00, 2, 28),
-    ("SEEDVIN004", "Nissan", "X-Trail", 2022, 35000, 85.00, 2, 30),
-    ("SEEDVIN005", "Suzuki", "Swift", 2018, 70000, 45.00, 1, 14),
+    ("SEEDVIN001", "Toyota", "Corolla", 2021, 20000, 50.00, 1, 30, 20, 1),
+    ("SEEDVIN002", "Mazda", "Axela", 2019, 62000, 55.00, 1, 21, 12, 3),
+    ("SEEDVIN003", "Honda", "Civic", 2020, 48000, 60.00, 2, 28, 8, 1),
+    ("SEEDVIN004", "Nissan", "X-Trail", 2022, 35000, 85.00, 2, 30, 15, 0),
+    ("SEEDVIN005", "Suzuki", "Swift", 2018, 70000, 45.00, 1, 14, 10, 4),
 ]
 
 def run_app_setup(auth_service, fleet_manager, booking_service):
@@ -45,9 +45,23 @@ def run_app_setup(auth_service, fleet_manager, booking_service):
         created["customer"] = True
 
     for car in cars:
-        vin = car[0]
+        car_data = car[:8]
+        attempts = car[8]
+        conflicts = car[9]
+
+        vin = car_data[0]
+
         if not fleet_manager.car_exists_by_vin(vin):
-            fleet_manager.add_car(*car)
+            fleet_manager.add_car(*car_data)
+
+            created_car = fleet_manager.get_car_by_vin(vin)
+
+            fleet_manager.update_car_booking_statistics(
+                created_car["car_id"],
+                attempts,
+                conflicts
+            )
+
             created["cars"] = True
     
     demo_customer = auth_service.get_user_by_email("customer")
@@ -64,5 +78,7 @@ def run_app_setup(auth_service, fleet_manager, booking_service):
             end_date
         )
         created["booking"] = True
+    
+    
 
     return created

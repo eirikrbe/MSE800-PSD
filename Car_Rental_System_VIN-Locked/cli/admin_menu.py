@@ -15,7 +15,7 @@ from cli.display_helpers import (
 )
 
 
-def admin_menu(booking_service, fleet_manager):
+def admin_menu(auth_service, booking_service, fleet_manager):
     while True:
         clear_screen()
         display_title("Admin Menu")
@@ -27,6 +27,7 @@ def admin_menu(booking_service, fleet_manager):
         print("6. Add car")
         print("7. Update car")
         print("8. Delete car")
+        print("9. Register user as a Admin")
         print("0. Logout")
 
         choice = ask_int("\nSelect an option: ")
@@ -208,6 +209,35 @@ def admin_menu(booking_service, fleet_manager):
             except ValueError as e:
                 display_error(str(e))
             pause()
+
+        elif choice == 9:
+            clear_screen()
+            display_title("Create Admin Account")
+
+            try:
+                full_name = ask_text("Full Name: ")
+                email = ask_text("Email: ")
+                password = ask_text("Password: ")
+                phone = ask_text("Phone Number: ")
+
+                registered_user = auth_service.register_user(
+                    full_name,
+                    email,
+                    password,
+                    phone=phone,
+                    role="admin"
+                )
+
+                if registered_user:
+                    display_success(
+                        f"Registration successful! Welcome, {full_name}. "
+                        "Your Admin account has been created."
+                    )
+                    pause()
+
+            except ValueError as e:
+                display_error(str(e))
+                pause()
          
         elif choice == 0:
             display_success("Goodbye!")

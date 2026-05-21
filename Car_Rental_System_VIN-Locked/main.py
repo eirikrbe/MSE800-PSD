@@ -9,6 +9,7 @@ from services.fleet_manager import FleetManager
 from services.booking_service import BookingService
 from services.rental_fee_calculator import RentalFeeCalculator
 from cli.main_menu import main_menu
+from cli.display_helpers import pause
 
 
 def main():
@@ -35,6 +36,7 @@ def main():
 
     if setup_result["booking"]:
         print("Default booking created.")
+        pause()
         
     try:
 

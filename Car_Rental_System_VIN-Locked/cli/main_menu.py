@@ -38,7 +38,7 @@ def main_menu(auth_service, booking_service, fleet_manager):
                 pause()
 
                 if logged_in_user.role == "admin":
-                    admin_menu(booking_service, fleet_manager)
+                    admin_menu(auth_service, booking_service, fleet_manager)
                 else:
                     customer_menu(logged_in_user, booking_service, fleet_manager)
             else:

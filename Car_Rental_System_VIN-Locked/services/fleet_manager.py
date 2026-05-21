@@ -15,6 +15,7 @@ from database.car_queries import (
     get_car_by_vin,
     update_car as db_update_car,
     delete_car as db_delete_car,
+    update_car_booking_statistics
 )
 
 
@@ -179,6 +180,23 @@ class FleetManager:
             daily_rate,
             min_rent_period,
             max_rent_period
+        )
+    
+    def update_car_booking_statistics(self, car_id, total_booking_attempts, total_conflicts):
+        if total_booking_attempts < 0:
+            raise ValueError("Booking attempts cannot be negative.")
+
+        if total_conflicts < 0:
+            raise ValueError("Total conflicts cannot be negative.")
+
+        if total_conflicts > total_booking_attempts:
+            raise ValueError("Total conflicts cannot exceed booking attempts.")
+
+        update_car_booking_statistics(
+            self.db_manager,
+            car_id,
+            total_booking_attempts,
+            total_conflicts
         )
     
     '''

@@ -44,6 +44,15 @@ def update_car_status(db_manager, car_id, new_status):
         raise ValueError(f"Car with ID {car_id} does not exist.")
     return True
 
+def update_car_booking_statistics(db_manager, car_id, total_booking_attempts, total_conflicts):
+    query = """
+        UPDATE cars
+        SET total_booking_attempts = ?,
+            total_conflicts = ?
+        WHERE car_id = ?
+    """
+    db_manager.execute_query(query, (total_booking_attempts, total_conflicts, car_id))
+
 def update_car(db_manager, car_id, make=None, model=None, year=None, mileage=None, daily_rate=None, min_rent_period=None, max_rent_period=None):
     fields = []
     params = []
@@ -83,6 +92,8 @@ def update_car(db_manager, car_id, make=None, model=None, year=None, mileage=Non
     if cursor.rowcount == 0:
         raise ValueError(f"Car with ID {car_id} does not exist.")
     return True
+
+
 
 def delete_car(db_manager, car_id):
     query = "DELETE FROM cars WHERE car_id = ?"
