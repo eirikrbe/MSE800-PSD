@@ -60,9 +60,9 @@ def display_bookings(bookings, fleet_manager, title="Bookings"):
     if not bookings:
         display_info(f"No {title.lower()} found.")
         return False
-    print()
-    print(f"\n{title}")
-    print()
+   
+    display_title(f"{title}")
+   
     print("ID | Car | Dates | Status | Fee")
 
     for booking in bookings:

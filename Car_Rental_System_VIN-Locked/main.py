@@ -9,7 +9,11 @@ from services.fleet_manager import FleetManager
 from services.booking_service import BookingService
 from services.rental_fee_calculator import RentalFeeCalculator
 from cli.main_menu import main_menu
-from cli.display_helpers import pause
+from cli.display_helpers import (
+    pause,
+    display_title,
+    display_success,
+    )
 
 
 def main():
@@ -22,22 +26,25 @@ def main():
     setup_result = run_app_setup(auth_service, fleet_manager, booking_service)
 
     if setup_result["admin"]:
-        print("Default admin account created.")
+        display_title("Default admin account created.")
         print("Email: admin")
         print("Password: admin")
 
     if setup_result["customer"]:
-        print("Demo customer account created.")
+        display_title("Demo customer account created.")
         print("Email: customer")
         print("Password: customer")
 
     if setup_result["cars"]:
-        print("Default cars created.")
+        display_title("Default cars created.")
 
     if setup_result["booking"]:
-        print("Default booking created.")
+        display_title("Default booking created.")
+
+    if any(setup_result.values()):
+        display_success("Setup completed.")
         pause()
-        
+
     try:
 
         main_menu(auth_service, booking_service, fleet_manager)

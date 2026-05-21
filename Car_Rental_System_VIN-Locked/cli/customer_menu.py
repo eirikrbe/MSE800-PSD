@@ -28,6 +28,7 @@ def customer_menu(logged_in_user, booking_service, fleet_manager):
         if choice == 1:
             clear_screen()
             available_cars = fleet_manager.get_available_cars()
+            display_title("Available Cars")
             display_cars(available_cars, fleet_manager)
             pause()
 
@@ -36,6 +37,7 @@ def customer_menu(logged_in_user, booking_service, fleet_manager):
             try:
                 clear_screen()
                 available_cars = fleet_manager.get_available_cars()
+                display_title("Make a Booking")
 
                 if not display_cars(available_cars, fleet_manager):
                     pause() 
@@ -65,6 +67,7 @@ def customer_menu(logged_in_user, booking_service, fleet_manager):
 
         elif choice == 3:
             try:
+                clear_screen()
                 bookings = booking_service.get_customer_bookings(logged_in_user.user_id)
                 display_bookings(bookings, fleet_manager, "My Bookings")
                 pause()
@@ -77,16 +80,19 @@ def customer_menu(logged_in_user, booking_service, fleet_manager):
 
         elif choice == 4:
             try:
+                clear_screen()
                 bookings = booking_service.get_customer_bookings(logged_in_user.user_id)
 
-                if not display_bookings(bookings, fleet_manager, "My Bookings"):
+                cancellable_bookings = [booking for booking in bookings if booking["status"] in ["pending", "approved"]]
+
+                if not display_bookings(cancellable_bookings, fleet_manager, "Bookings Available for Cancellation"):
                     pause()
                     continue
 
                 booking_id = ask_int("\nEnter the booking ID to cancel: ")
 
-                if booking_id not in [b["booking_id"] for b in bookings]:
-                    display_error(f"Booking ID {booking_id} is not in your bookings.")
+                if booking_id not in [b["booking_id"] for b in cancellable_bookings]:
+                    display_error(f"Booking ID {booking_id} is not available for cancellation")
                     pause()
                     continue
 
