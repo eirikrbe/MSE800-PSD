@@ -1,16 +1,16 @@
 .DS_Store
 .vscode/
 
-# Database and local session files
+
 *.db
 MySQL Local.session.sql
 W4/Test_SQL/
 Car_Rental_System_VIN-Locked/
 
-# Backup files
+
 *.bkp
 
-# Python cache
+
 __pycache__/
 **/__pycache__/
 *.py[cod]
