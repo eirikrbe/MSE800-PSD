@@ -5,7 +5,7 @@
 *.db
 MySQL Local.session.sql
 W4/Test_SQL/
-Car_Rental_System_VIN-Locked/Documentation
+Car_Rental_System_VIN-Locked/
 
 # Backup files
 *.bkp
