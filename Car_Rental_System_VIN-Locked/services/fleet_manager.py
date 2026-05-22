@@ -24,6 +24,12 @@ class FleetManager:
 
     @classmethod
     def get_instance(cls, db_manager):
+        """Return a singleton `FleetManager` for the given `db_manager`.
+
+        Pattern: implements a simple module-level singleton to ensure shared
+        in-memory state (e.g. booking attempts and conflict recording) is
+        concentrated in a single manager instance.
+        """
         if cls._instance is None:
             cls._instance = cls(db_manager)
         return cls._instance
@@ -39,6 +45,15 @@ class FleetManager:
         min_rent_period=None,
         max_rent_period=None
         ):
+        """Validate car attribute ranges and relational constraints.
+
+        Rules enforced:
+        - `year` must be within sensible bounds (1900-2100).
+        - `mileage` and `daily_rate` must be non-negative and positive respectively.
+        - `min_rent_period` and `max_rent_period` must be positive and
+          `min_rent_period` cannot exceed `max_rent_period` when both provided.
+        Raises `ValueError` on violation.
+        """
         if year is not None and (year < 1900 or year > 2100):
             raise ValueError("Invalid year.")
 
@@ -84,6 +99,14 @@ class FleetManager:
         return car["status"] == "available"
     
     def check_date_conflict(self, car_id, start_date, end_date):
+        """Check for overlapping bookings for a car.
+
+        - Parses `start_date`/`end_date` as 'YYYY-MM-DD'.
+        - Raises `ValueError` if the requested end is not after start.
+        - Ignores bookings in terminal states: 'cancelled', 'completed', 'rejected'.
+        - If an overlap is detected, increments conflict counter via
+          `record_conflict` and returns True; otherwise returns False.
+        """
         new_start = datetime.strptime(start_date, "%Y-%m-%d")
         new_end = datetime.strptime(end_date, "%Y-%m-%d")
         if new_start >= new_end:
@@ -101,13 +124,26 @@ class FleetManager:
         return False
 
     def lock_vehicle(self, car_id):
-        car = self.get_car_by_id(car_id)
-        if car["status"] != "available":
-            raise ValueError(f"Car with ID {car_id} is not available for locking.")
-        update_car_status(self.db_manager, car_id, "locked")
-        return True
+                """Transition vehicle to 'locked' to reserve it for booking creation.
+
+                - Enforces that only `available` cars can be locked; raises `ValueError`
+                    otherwise.
+                - Persists the status change via `update_car_status`.
+                - This method is used to reduce double-booking windows prior to
+                    inserting a booking record.
+                """
+                car = self.get_car_by_id(car_id)
+                if car["status"] != "available":
+                        raise ValueError(f"Car with ID {car_id} is not available for locking.")
+                update_car_status(self.db_manager, car_id, "locked")
+                return True
 
     def release_vehicle(self, car_id):
+        """Release a vehicle back to 'available' state from 'locked' or 'rented'.
+
+        - Validates current status is one that can be released.
+        - Persists the transition via `update_car_status`.
+        """
         car = self.get_car_by_id(car_id)
         if car["status"] not in ["locked", "rented"]:
             raise ValueError(f"Car with ID {car_id} is not currently locked or rented.")
@@ -115,6 +151,11 @@ class FleetManager:
         return True
 
     def mark_vehicle_rented(self, car_id):
+        """Mark a locked vehicle as rented when a booking is activated.
+
+        - Enforces the state transition from 'locked' -> 'rented'.
+        - Raises ValueError if caller attempts to mark a non-locked vehicle.
+        """
         car = self.get_car_by_id(car_id)
         if car["status"] != "locked":
             raise ValueError(f"Car with ID {car_id} must be locked before marking as rented.")
@@ -240,21 +281,31 @@ class FleetManager:
         return min(100, max(0, (1 - conflicts / attempts) * 100))
     
     def calculate_confidence_score(self, car_id):
-        car = self.get_car_by_id(car_id)
+                """Compute an overall confidence score used for ranking vehicles.
+
+                Composition and rationale:
+                - Aggregates four sub-scores (reliability, mileage, age, conflict)
+                    with tunable weights (40/25/20/15 respectively).
+                - Sub-scores use sensible defaults for new vehicles (e.g., 75)
+                    so that newcomers are not penalized excessively.
+                - Returns a rounded float (1 decimal) intended for display only; it
+                    does not alter persistent state.
+                """
+                car = self.get_car_by_id(car_id)
         
-        reliability = self.calculate_booking_reliability_score(car_id)
-        mileage = self.calculate_mileage_score(car)
-        age = self.calculate_vehicle_age_score(car)
-        conflict = self.calculate_conflict_score(car)
+                reliability = self.calculate_booking_reliability_score(car_id)
+                mileage = self.calculate_mileage_score(car)
+                age = self.calculate_vehicle_age_score(car)
+                conflict = self.calculate_conflict_score(car)
         
-        score = (
-            reliability * 0.40 +
-            mileage     * 0.25 +
-            age         * 0.20 +
-            conflict    * 0.15
-        )
+                score = (
+                        reliability * 0.40 +
+                        mileage     * 0.25 +
+                        age         * 0.20 +
+                        conflict    * 0.15
+                )
         
-        return round(score, 1)
+                return round(score, 1)
     
     def record_booking_attempt(self, car_id):
         increment_booking_attempts(self.db_manager, car_id)

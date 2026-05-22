@@ -38,6 +38,13 @@ class Car:
     
     @classmethod
     def from_row(cls, row):
+        """Construct a `Car` instance from a DB row/mapping.
+
+        Expects `row` to be a mapping with keys matching the cars table
+        (e.g. 'car_id', 'vin', 'make', 'model', 'year', 'mileage', etc.).
+        This is a convenience for translating `sqlite3.Row` objects into
+        domain objects.
+        """
         return cls(
             car_id=row["car_id"],
             vin=row["vin"],
@@ -54,6 +61,12 @@ class Car:
         )
     
     def is_rent_period_valid(self, start_date, end_date):
+        """Validate that the requested rental duration is within allowed bounds.
+
+        - Parses dates as 'YYYY-MM-DD' and computes `duration` in whole days.
+        - Returns True if `min_rent_period <= duration <= max_rent_period`.
+        - Does not raise on invalid dates (parsing errors will propagate).
+        """
         start = datetime.strptime(start_date, "%Y-%m-%d").date()
         end = datetime.strptime(end_date, "%Y-%m-%d").date()
 

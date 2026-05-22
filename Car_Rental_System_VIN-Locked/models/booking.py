@@ -25,6 +25,12 @@ class Booking:
         }
 
     def calculate_duration(self):
+        """Return the rental duration in days and validate date order.
+
+        - Parses `start_date` and `end_date` as 'YYYY-MM-DD'.
+        - Returns integer number of days (end - start).
+        - Raises `ValueError` if duration is not positive.
+        """
         start = datetime.strptime(self.start_date, "%Y-%m-%d")
         end = datetime.strptime(self.end_date, "%Y-%m-%d")
         duration = (end - start).days

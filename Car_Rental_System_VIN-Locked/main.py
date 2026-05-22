@@ -17,7 +17,17 @@ from cli.display_helpers import (
 
 
 def main():
-    
+    """Start the application: initialize services, seed data and run the main menu.
+
+    Side effects:
+    - Creates and connects a `DatabaseManager` (persistent sqlite file).
+    - Instantiates singleton `FleetManager` and service objects.
+    - Runs `run_app_setup` to seed admin/customer/cars/bookings and prints seeded credentials.
+    - Launches the interactive `main_menu` and ensures DB disconnect on exit.
+
+    Note: setup returns a dict indicating which resources were created; callers
+    should not assume idempotence of seeding beyond this function's logic.
+    """
     db = DatabaseManager()
     fleet_manager = FleetManager.get_instance(db)
     rental_fee_calculator = RentalFeeCalculator()

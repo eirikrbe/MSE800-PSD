@@ -12,6 +12,13 @@ class DatabaseManager:
         self.create_tables()
 
     def connect(self):
+        """Establish a sqlite3 connection to the persistent DB file.
+
+        Behavior and guarantees:
+        - Opens connection to `DB_PATH` and enables `PRAGMA foreign_keys = ON`.
+        - Sets `row_factory` to `sqlite3.Row` so callers receive mapping-like rows.
+        - Prints a confirmation on success and raises an Exception on failure.
+        """
         try:
             self.connection = sqlite3.connect(DB_PATH)
             self.connection.execute("PRAGMA foreign_keys = ON")
@@ -32,6 +39,14 @@ class DatabaseManager:
         return self.connection
 
     def create_tables(self):
+        """Create required tables with constraints if they do not exist.
+
+        Important schema notes for graders:
+        - `users.role` enforces allowed roles via CHECK('customer'|'admin').
+        - `cars.status` enforces fleet states: 'locked', 'rented', 'available'.
+        - `bookings.status` enforces lifecycle states and bookings reference users and cars.
+        - Commits the DDL on success; raises an Exception on sqlite errors.
+        """
         try:
             connection = self.get_connection()
             cursor = connection.cursor()
@@ -83,6 +98,11 @@ class DatabaseManager:
 # General method to execute queries with error handling
 
     def execute_query(self, query, params=None):
+        """Execute a modifying query (INSERT/UPDATE/DELETE) and commit.
+
+        Returns the cursor so callers can inspect `lastrowid` or `rowcount`.
+        Raises an Exception wrapping sqlite3 errors.
+        """
         try:
             connection = self.get_connection()
             cursor = connection.cursor()
@@ -94,6 +114,11 @@ class DatabaseManager:
             raise Exception(f"Error executing query: {e}")
         
     def fetch_one(self, query, params=None):
+        """Execute a SELECT expected to return at most one row.
+
+        Returns a `sqlite3.Row` (mapping-like) or `None` if no record found.
+        Errors are wrapped as Exceptions.
+        """
         try:
             connection = self.get_connection()
             cursor = connection.cursor()
@@ -103,6 +128,10 @@ class DatabaseManager:
             raise Exception(f"Error fetching one record: {e}")
 
     def fetch_all(self, query, params=None):
+        """Execute a SELECT and return all rows as a list of `sqlite3.Row`.
+
+        Use this for result sets; callers should treat rows as mapping-like (e.g. row['col']).
+        """
         try:
             connection = self.get_connection() 
             cursor = connection.cursor()

@@ -24,6 +24,21 @@ class BookingService:
         return db_booking_exists(self.db_manager)
 
     def request_booking(self, customer_id, car_id, start_date, end_date):
+        """Create a booking request and return its DB id.
+
+        Business rules and side effects:
+        - Validates car existence and availability; raises `ValueError` if invalid.
+        - Expects `start_date` and `end_date` as 'YYYY-MM-DD' strings.
+        - Ensures requested period satisfies car's min/max rent period via
+          `Car.is_rent_period_valid`.
+        - Records a booking attempt and checks for date conflicts; conflicts
+          increment the car's conflict counter and block the booking.
+        - Locks the vehicle (`fleet_manager.lock_vehicle`) before persisting
+          the booking to reduce race conditions; note this is not wrapped in
+          an atomic DB transaction in current implementation.
+        - Calculates total fee via `rental_fee_calculator.calculate_fee`.
+        - Inserts the booking with status 'pending' and returns the new id.
+        """
 
         car_row = self.fleet_manager.get_car_by_id(car_id)
 
@@ -72,6 +87,14 @@ class BookingService:
         return booking_id
     
     def process_booking_approval(self, booking_id):
+        """Approve a pending booking and return the updated booking row.
+
+        Preconditions and effects:
+        - Booking must exist and be in 'pending' state; otherwise raises ValueError.
+        - Transitions booking.status -> 'approved' in the DB via `update_booking_status`.
+        - Does not automatically change vehicle lock state; callers (admin UI)
+          should manage vehicle lifecycle (activation will mark rented).
+        """
         booking = get_booking_by_id(self.db_manager, booking_id)
 
         if not booking:
@@ -87,6 +110,12 @@ class BookingService:
         return updated_booking
     
     def process_booking_rejection(self, booking_id):
+        """Reject a pending booking, release any locked vehicle, and return updated row.
+
+        - Ensures booking exists and is 'pending'.
+        - Sets booking.status -> 'rejected' and calls `fleet_manager.release_vehicle`
+          to return the car to 'available' state.
+        """
         booking = get_booking_by_id(self.db_manager, booking_id)
 
         if not booking:
@@ -104,6 +133,13 @@ class BookingService:
         return updated_booking 
     
     def process_booking_activation(self, booking_id):
+        """Activate an approved booking and mark the vehicle as rented.
+
+        - Booking must exist and be in 'approved' state.
+        - Transitions booking.status -> 'active' and calls
+          `fleet_manager.mark_vehicle_rented` which enforces status transition
+          from 'locked' -> 'rented'.
+        """
         booking = get_booking_by_id(self.db_manager, booking_id)
 
         if not booking:
@@ -121,6 +157,12 @@ class BookingService:
         return updated_booking
     
     def process_booking_completion(self, booking_id):
+        """Complete an active booking and release the vehicle back to available.
+
+        - Validates the booking exists and is 'active'.
+        - Sets booking.status -> 'completed' and calls
+          `fleet_manager.release_vehicle` to set car to 'available'.
+        """
         booking = get_booking_by_id(self.db_manager, booking_id)
 
         if not booking:
@@ -138,6 +180,12 @@ class BookingService:
         return updated_booking
 
     def process_booking_cancellation(self, booking_id):
+        """Cancel a pending or approved booking and free the vehicle.
+
+        - Allowed source states: 'pending' or 'approved'; other states raise ValueError.
+        - Transitions booking.status -> 'cancelled' and calls
+          `fleet_manager.release_vehicle` to make the car available again.
+        """
         booking = get_booking_by_id(self.db_manager, booking_id)
 
         if not booking:

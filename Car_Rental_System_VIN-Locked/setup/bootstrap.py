@@ -49,6 +49,20 @@ def make_booking_data(customer_id, car, start_offset, end_offset, status):
 
 
 def run_app_setup(auth_service, fleet_manager, booking_service):
+    """Seed the application with default admin, demo customer, cars, and bookings.
+
+    Returns a dict indicating which resources were created. Behavior details:
+    - Creates a default admin and demo customer if they do not exist.
+    - Adds predefined cars when VINs are not present and sets their booking
+      statistics (`total_booking_attempts`, `total_conflicts`).
+    - Seeds bookings and maps booking statuses to car status as follows:
+        - 'pending' or 'approved' -> car status 'locked'
+        - 'active'                -> car status 'rented'
+        - otherwise               -> car status 'available'
+    - Uses services' public APIs (`auth_service.register_user`,
+      `fleet_manager.add_car`, `add_booking`, `update_car_status`) to ensure
+      business rules are applied consistently.
+    """
 
     created = {
         "admin": False,
