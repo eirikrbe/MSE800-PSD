@@ -14,6 +14,7 @@ from cli.display_helpers import (
 )
 
 def customer_menu(logged_in_user, booking_service, fleet_manager):
+    """Customer CLI loop for browsing cars, requesting bookings and cancellations."""
     while True:
         clear_screen()
         display_title("Customer Menu")

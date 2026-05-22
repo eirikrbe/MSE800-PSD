@@ -20,6 +20,7 @@ from database.car_queries import (
 
 
 class FleetManager:
+    """Manages vehicle state, availability, metrics and confidence scoring for the fleet."""
     _instance = None
 
     @classmethod
@@ -124,19 +125,19 @@ class FleetManager:
         return False
 
     def lock_vehicle(self, car_id):
-                """Transition vehicle to 'locked' to reserve it for booking creation.
+        """Transition vehicle to 'locked' to reserve it for booking creation.
 
-                - Enforces that only `available` cars can be locked; raises `ValueError`
-                    otherwise.
-                - Persists the status change via `update_car_status`.
-                - This method is used to reduce double-booking windows prior to
-                    inserting a booking record.
-                """
-                car = self.get_car_by_id(car_id)
-                if car["status"] != "available":
-                        raise ValueError(f"Car with ID {car_id} is not available for locking.")
-                update_car_status(self.db_manager, car_id, "locked")
-                return True
+        - Enforces that only `available` cars can be locked; raises `ValueError`
+            otherwise.
+        - Persists the status change via `update_car_status`.
+        - This method is used to reduce double-booking windows prior to
+            inserting a booking record.
+        """
+        car = self.get_car_by_id(car_id)
+        if car["status"] != "available":
+                raise ValueError(f"Car with ID {car_id} is not available for locking.")
+        update_car_status(self.db_manager, car_id, "locked")
+        return True
 
     def release_vehicle(self, car_id):
         """Release a vehicle back to 'available' state from 'locked' or 'rented'.
@@ -173,6 +174,7 @@ class FleetManager:
         return db_delete_car(self.db_manager, car_id)
        
     def add_car(self, vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period):
+        """Validate attributes, enforce VIN uniqueness, and persist a new car record."""
         existing_car = get_car_by_vin(self.db_manager, vin)
         if existing_car:
             raise ValueError("A car with this VIN already exists.")
@@ -188,6 +190,7 @@ class FleetManager:
         return db_add_car(self.db_manager, vin, make, model, year, mileage, daily_rate, min_rent_period, max_rent_period)
 
     def update_car(self, car_id, make=None, model=None, year=None, mileage=None, daily_rate=None, min_rent_period=None, max_rent_period=None):
+        """Validate requested field updates (e.g., mileage non-decreasing) and persist changes."""
         
         current_car = self.get_car_by_id(car_id)
 
@@ -245,6 +248,7 @@ class FleetManager:
     '''
 
     def calculate_booking_reliability_score(self, car_id):
+        """Calculate a reliability sub-score from the vehicle's booking history."""
         bookings = get_bookings_by_car(self.db_manager, car_id)
         
         completed = 0
@@ -263,15 +267,18 @@ class FleetManager:
         return (completed / total_relevant) * 100
     
     def calculate_mileage_score(self, car):
+        """Return a 0–100 score reflecting mileage-related condition; higher is better."""
         mileage = car["mileage"]
         return max(0, (1 - mileage / 200000) * 100)
     
     def calculate_vehicle_age_score(self, car):
+        """Return a 0–100 score reflecting vehicle age; newer cars score higher."""
         current_year = datetime.now().year
         age = current_year - car["year"]
         return max(0, (1 - age / 20) * 100)
     
     def calculate_conflict_score(self, car):
+        """Return a 0–100 score derived from conflict rate with sensible fallbacks."""
         attempts = car["total_booking_attempts"]
         conflicts = car["total_conflicts"]
         
@@ -281,34 +288,36 @@ class FleetManager:
         return min(100, max(0, (1 - conflicts / attempts) * 100))
     
     def calculate_confidence_score(self, car_id):
-                """Compute an overall confidence score used for ranking vehicles.
+        """Compute an overall confidence score used for ranking vehicles.
 
-                Composition and rationale:
-                - Aggregates four sub-scores (reliability, mileage, age, conflict)
-                    with tunable weights (40/25/20/15 respectively).
-                - Sub-scores use sensible defaults for new vehicles (e.g., 75)
-                    so that newcomers are not penalized excessively.
-                - Returns a rounded float (1 decimal) intended for display only; it
-                    does not alter persistent state.
-                """
-                car = self.get_car_by_id(car_id)
-        
-                reliability = self.calculate_booking_reliability_score(car_id)
-                mileage = self.calculate_mileage_score(car)
-                age = self.calculate_vehicle_age_score(car)
-                conflict = self.calculate_conflict_score(car)
-        
-                score = (
-                        reliability * 0.40 +
-                        mileage     * 0.25 +
-                        age         * 0.20 +
-                        conflict    * 0.15
-                )
-        
-                return round(score, 1)
+        Composition and rationale:
+        - Aggregates four sub-scores (reliability, mileage, age, conflict)
+            with tunable weights (40/25/20/15 respectively).
+        - Sub-scores use sensible defaults for new vehicles (e.g., 75)
+            so that newcomers are not penalized excessively.
+        - Returns a rounded float (1 decimal) intended for display only; it
+            does not alter persistent state.
+        """
+        car = self.get_car_by_id(car_id)
+
+        reliability = self.calculate_booking_reliability_score(car_id)
+        mileage = self.calculate_mileage_score(car)
+        age = self.calculate_vehicle_age_score(car)
+        conflict = self.calculate_conflict_score(car)
+
+        score = (
+                reliability * 0.40 +
+                mileage     * 0.25 +
+                age         * 0.20 +
+                conflict    * 0.15
+        )
+
+        return round(score, 1)
     
     def record_booking_attempt(self, car_id):
+        """Atomically increment booking-attempt counter for analytics and scoring."""
         increment_booking_attempts(self.db_manager, car_id)
 
     def record_conflict(self, car_id):
+        """Atomically increment conflict counter when overlapping bookings occur."""
         increment_total_conflicts(self.db_manager, car_id)

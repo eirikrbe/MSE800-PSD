@@ -6,6 +6,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "car_rental.db"))
 
 class DatabaseManager:
+    """Manages sqlite connection lifecycle, schema creation and simple query helpers."""
     def __init__(self):
         self.connection = None
         self.connect()

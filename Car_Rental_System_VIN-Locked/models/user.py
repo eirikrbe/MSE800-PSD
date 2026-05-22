@@ -1,6 +1,7 @@
 
 
 class User:
+    """Domain model holding authenticated user data and normalized role metadata."""
     def __init__(self, full_name, email, password_hash, role, phone=None, user_id=None, created_at=None):
         self.user_id = user_id
         self.full_name = full_name

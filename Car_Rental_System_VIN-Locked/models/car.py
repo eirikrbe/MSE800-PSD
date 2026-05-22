@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 class Car:
+    """Vehicle entity encapsulating attributes, rent constraints and DB row conversion."""
     def __init__(self, vin, make, model, year, mileage, daily_rate, status="available", min_rent_period=1, max_rent_period=30, total_booking_attempts=0, total_conflicts=0, car_id=None):
         self.car_id = car_id
         self.vin = vin

@@ -15,6 +15,7 @@ from cli.display_helpers import (
 )
 
 def admin_menu(auth_service, booking_service, fleet_manager):
+    """Admin CLI loop for booking approvals, car CRUD and admin user tasks."""
     while True:
         clear_screen()
         display_title("Admin Menu")

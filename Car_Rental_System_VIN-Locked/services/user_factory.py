@@ -4,6 +4,7 @@ from models.admin import Admin
 
 
 class UserFactory:
+    """Factory to instantiate concrete user subtypes from role and DB fields."""
     @staticmethod
     def create_user(role, full_name, email, password_hash, phone=None, user_id=None, created_at=None):
         """Factory method returning a domain user instance based on `role`.

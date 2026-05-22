@@ -15,6 +15,7 @@ from database.booking_queries import (
 
 
 class BookingService:
+    """Orchestrates booking lifecycle, validations, vehicle coordination and persistence."""
     def __init__(self, db_manager, fleet_manager, rental_fee_calculator):
         self.db_manager = db_manager
         self.fleet_manager = fleet_manager

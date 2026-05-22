@@ -4,6 +4,7 @@ from datetime import datetime
 
 
 class Booking:
+    """Reservation entity tracking dates, fee and lifecycle with duration validation."""
     def __init__(self, customer_id, car_id, start_date, end_date, status, booking_id=None, total_fee=0):
         self.booking_id = booking_id
         self.customer_id = customer_id

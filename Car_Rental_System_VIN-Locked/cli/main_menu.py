@@ -13,6 +13,7 @@ from cli.display_helpers import (
     )
 
 def main_menu(auth_service, booking_service, fleet_manager):
+    """Top-level CLI loop handling login, registration and dispatching submenus."""
     while True:
         clear_screen()
         display_title("Welcome to Car Rental System \n  VIN-Locked Smart Reservation")
