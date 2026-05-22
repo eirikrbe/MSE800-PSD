@@ -15,8 +15,7 @@ from cli.display_helpers import (
 def main_menu(auth_service, booking_service, fleet_manager):
     while True:
         clear_screen()
-        display_title("Welcome to Car Rental System")
-        print("VIN-Locked Smart Reservation")
+        display_title("Welcome to Car Rental System \n  VIN-Locked Smart Reservation")
         print()
         print("1. Login")
         print("2. Register as Customer")

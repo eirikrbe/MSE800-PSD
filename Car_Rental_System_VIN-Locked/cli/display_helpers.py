@@ -62,15 +62,28 @@ def display_bookings(bookings, fleet_manager, title="Bookings"):
         return False
    
     display_title(f"{title}")
+
+    show_customer = "customer_name" in bookings[0].keys()
    
-    print("ID | Car | Dates | Status | Fee")
+    if show_customer:
+        print("ID | Customer | Car | Dates | Status | Fee")
+    else:
+        print("ID | Car | Dates | Status | Fee")
 
     for booking in bookings:
         car = fleet_manager.get_car_by_id(booking["car_id"])
-        print(
-            f"{booking['booking_id']} | {car['make']} {car['model']} | "
-            f"{booking['start_date']} → {booking['end_date']} | "
-            f"{booking['status']} | ${booking['total_fee']:.2f}"
-        )
+        if show_customer:
+            print(
+                f"{booking['booking_id']} | {booking['customer_name']} | "
+                f"{car['make']} {car['model']} | "
+                f"{booking['start_date']} → {booking['end_date']} | "
+                f"{booking['status']} | ${booking['total_fee']:.2f}"
+            )
+        else:
+            print(
+                f"{booking['booking_id']} | {car['make']} {car['model']} | "
+                f"{booking['start_date']} → {booking['end_date']} | "
+                f"{booking['status']} | ${booking['total_fee']:.2f}"
+            )
 
     return True

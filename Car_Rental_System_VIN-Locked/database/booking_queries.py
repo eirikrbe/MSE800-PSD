@@ -50,7 +50,21 @@ def get_bookings_by_car(db_manager, car_id):
 def get_bookings_by_status(db_manager, status):
     validate_booking_status(status)
 
-    query = "SELECT * FROM bookings WHERE status = ?"
+    query = """
+    SELECT
+        bookings.booking_id,
+        bookings.customer_id,
+        users.full_name AS customer_name,
+        users.email AS customer_email,
+        bookings.car_id,
+        bookings.start_date,
+        bookings.end_date,
+        bookings.total_fee,
+        bookings.status
+    FROM bookings
+    JOIN users ON bookings.customer_id = users.user_id
+    WHERE bookings.status = ?
+    """
     return db_manager.fetch_all(query, (status,))
 
 
