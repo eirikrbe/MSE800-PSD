@@ -6,6 +6,12 @@ from models import SmartLight, SmartFan, SmartAirConditioner
 def main():
    
     manager = DeviceManager()
+    manager2 = DeviceManager()
+
+    print(manager)
+    print(manager2)
+
+    print(manager is manager2)
 
     '''
     Converts menu choices into factory device type keys.
