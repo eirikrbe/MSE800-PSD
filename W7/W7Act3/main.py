@@ -30,6 +30,7 @@ def main():
         print("1. Add Smart Device")
         print("2. Display Device Status")
         print("3. Configure Device")
+        print("4. Exit")
 
         choice = input("\nSelect an option: ").strip()
 
@@ -88,9 +89,17 @@ def main():
                     )
                     print(row)
 
-                edit_device = int(input("Enter the Device id to edit: "))
+                try: 
+                    edit_device = int(input("Enter the Device id to edit: "))
+                except ValueError:
+                    print("Invalid number")
+                    continue
 
-                selected_device = manager.get_device(edit_device)
+                try:
+                    selected_device = manager.get_device(edit_device)
+                except ValueError as error:
+                    print(error)
+                    continue
 
                 print("Configure Device")
                 print()
@@ -101,26 +110,47 @@ def main():
                 choice_edition = input("Select Configure Option")
 
                 if choice_edition == "1":
-                    selected_device.turn_on()
+                    try:
+                        selected_device.turn_on()
+                    except ValueError as error:
+                        print(error)
+                        continue
                 
                 elif choice_edition == "2":
-                    selected_device.turn_off()
+                    try:
+                        selected_device.turn_off()
+                    except ValueError as error:
+                        print(error)
+                        continue
 
                 elif choice_edition == "3":
                     if isinstance(selected_device, SmartLight):
-                        brightness = int(input("Enter brightness between 0 and 100: "))
-                        selected_device.set_brightness(brightness)
-                        print("Brightness updated successfully.")
+                        try:
+                            brightness = int(input("Enter brightness between 0 and 100: "))
+                            selected_device.set_brightness(brightness)
+                            print("Brightness updated successfully.")
+                        except ValueError as error:
+                            print(error)    
 
                     elif isinstance(selected_device, SmartFan):
-                        speed = input("Enter speed: low, medium, or high: ")
-                        selected_device.set_speed(speed)
-                        print("Speed updated successfully.")
+                        try:
+                            speed = input("Enter speed: low, medium, or high: ")
+                            selected_device.set_speed(speed)
+                            print("Speed updated successfully.")
+                        except ValueError as error:
+                            print(error)
 
                     elif isinstance(selected_device, SmartAirConditioner):
-                        temperature = int(input("Enter temperature between 15 and 32: "))
-                        selected_device.set_temperature(temperature)
-                        print("Temperature updated successfully.")
+                        try:
+                            temperature = int(input("Enter temperature between 15 and 32: "))
+                            selected_device.set_temperature(temperature)
+                            print("Temperature updated successfully.")
+                        except ValueError as error:
+                            print(error)
+
+        elif choice == "4":
+            print("Goodbye.")
+            break
 
 if __name__ == "__main__":
     main()
