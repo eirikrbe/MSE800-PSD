@@ -1,6 +1,9 @@
 
 # Car Rental System (Python + SQLite + Docker)
 
+
+![car_rental](image.png)
+
 Simple CLI app to add, list, and remove cars (plate, type, year) using a SQLite database.
 
 ## Quickstart
@@ -27,3 +30,4 @@ docker run -it --rm -v %cd%/cars.db:/app/cars.db car_rental
 - Remove Car
 - Exit
 ```
+
