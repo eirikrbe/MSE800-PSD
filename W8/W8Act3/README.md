@@ -52,8 +52,7 @@ Domestic Flight Number = abc123, Departure Airport Auckland, Arrival Airport Que
 
 ![raw devices](image.png)
 
-### Device Status After Configuration
-
+### Class Diagram
 
 ![Display Device Status](class_diagram.drawio.png)
 
