@@ -1,5 +1,5 @@
 
-from signal import pause
+
 
 from manager import DeviceManager
 from models import SmartLight, SmartFan, SmartAirConditioner
