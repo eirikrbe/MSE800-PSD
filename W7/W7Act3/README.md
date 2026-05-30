@@ -8,9 +8,6 @@
 The app allows a user to create and manage smart office devices, including a Smart Light, Smart Fan, and Smart Air Conditioner. Each device has a location, power status, and a specific setting, such as brightness, speed, or temperature.
 
 
-![W7Act3](image.png)
-
-
 ## Design Patterns Used
 
 ### Factory Pattern
@@ -59,4 +56,14 @@ The project also demonstrates the four main object-oriented programming principl
 - Polymorphism can be seen in the `display_status()` method implemented differently in each child class. Even though the    `DeviceManager` stores all devices together in one list, the program can call `display_status()` on any device object and Python automatically executes the correct version depending on the actual object type. This allows the system to treat all devices uniformly while still producing device-specific output.
 - Encapsulation is demonstrated by keeping device data and behaviour together inside each class. Each smart device manages its own internal state, such as power status, brightness, speed, or temperature, through methods like `turn_on()`, `turn_off()`, `set_brightness()`, `set_speed()`, and `set_temperature()`. The main program does not directly manipulate internal attributes; instead, it interacts with devices through controlled methods, helping maintain valid device behaviour and improving code organisation.
 
+## Sample Outputs
+
+### Default Device Status Before Configuration
+
+![raw devices](image.png)
+
+### Device Status After Configuration
+
+
+![Display Device Status](image2.png)
 

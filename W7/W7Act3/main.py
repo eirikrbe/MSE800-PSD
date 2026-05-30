@@ -1,7 +1,9 @@
 
+from signal import pause
+
 from manager import DeviceManager
 from models import SmartLight, SmartFan, SmartAirConditioner
-
+import os
 
 def main():
    
@@ -24,6 +26,7 @@ def main():
         }
 
     while True:
+        os.system("clear")
         print()
         print("Welcome to the Office IoT Management System")
         print()
@@ -62,6 +65,8 @@ def main():
             if not devices:
                 print("No devices created yet")
 
+                input("\nPress Enter to continue...")
+
             else:
                 print("\nDevice | Location | Power | Status")
                 print("---------------------------------------------")
@@ -71,6 +76,7 @@ def main():
                         f"{status['device']} | {status['location']} | {status['power']} | {status['status']}"
                     )
                     print(row)
+                input("\nPress Enter to continue...")
 
         elif choice == "3":
 
@@ -107,7 +113,7 @@ def main():
                 print("2. Turn Off")
                 print("3. Adjust Setting")
 
-                choice_edition = input("Select Configure Option")
+                choice_edition = input("Select Configure Option: ")
 
                 if choice_edition == "1":
                     try:
