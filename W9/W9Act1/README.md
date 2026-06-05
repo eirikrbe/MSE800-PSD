@@ -2,7 +2,12 @@
 
 ## Overview
 
-This folder contains the Waterfall project management diagram for **Ako Kupu**, a web-based Te Reo Māori flashcard and learner progress system developed for **MSE800 Assessment 2** by **Group E**.
+This folder contains the Waterfall project management diagram for **Ako Kupu**, a web-based Te Reo Māori flashcard and learner progress system developed for **MSE800 Assessment 2**
+
+**DEVELOPMENT TEAM - Group E**
+
+- Yirong Chen
+- Eric Gomez
 
 ## Diagram
 
