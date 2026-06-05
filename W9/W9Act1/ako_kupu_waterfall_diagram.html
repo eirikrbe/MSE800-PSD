@@ -1,0 +1,135 @@
+
+<h2 class="sr-only">Ako Kupu Waterfall Project Management Diagram — Group E — MSE800 Assessment 2</h2>
+<style>
+:root{--p1c:#3B6D11;--p1b:#EAF3DE;--p2c:#0F6E56;--p2b:#E1F5EE;--p3c:#185FA5;--p3b:#E6F1FB;--p4c:#854F0B;--p4b:#FAEEDA;--p5c:#993C1D;--p5b:#FAECE7;--p6c:#534AB7;--p6b:#EEEDFE}
+@media(prefers-color-scheme:dark){:root{--p1c:#C0DD97;--p1b:#27500A;--p2c:#5DCAA5;--p2b:#085041;--p3c:#85B7EB;--p3b:#0C447C;--p4c:#FAC775;--p4b:#633806;--p5c:#F0997B;--p5b:#712B13;--p6c:#AFA9EC;--p6b:#3C3489}}
+.ph{display:grid;grid-template-columns:48px 1fr;gap:0 12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px}
+.num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:15px;flex-shrink:0}
+.pname{font-weight:500;font-size:15px;color:var(--color-text-primary);margin-bottom:2px}
+.ptime{font-size:12px;color:var(--color-text-secondary);margin-bottom:10px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px}
+.act{font-size:12px;color:var(--color-text-secondary);line-height:1.55;display:flex;align-items:flex-start;gap:6px}
+.dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.dv{margin-top:10px;font-size:12px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.arr{text-align:center;padding:3px 0;color:var(--color-text-secondary);font-size:16px}
+</style>
+
+<div style="background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:20px 24px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;">
+  <div>
+    <div style="font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:8px;">MSE800 · Assessment 2</div>
+    <div style="font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;">Ako Kupu</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:14px;max-width:340px;line-height:1.5;">A web-based Te Reo Māori flashcard and learner progress system</div>
+    <span style="background:var(--color-background-success);color:var(--color-text-success);font-size:12px;font-weight:500;padding:4px 14px;border-radius:var(--border-radius-md);">↓ Waterfall methodology</span>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div style="font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:6px;">Development team</div>
+    <div style="font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px;">Group E</div>
+    <div style="font-size:13px;color:var(--color-text-secondary);line-height:2.0;">Yirong Chen<br>Eric Gomez</div>
+  </div>
+</div>
+
+<p style="font-size:12px;color:var(--color-text-secondary);line-height:1.65;margin-bottom:14px;padding:0 2px;font-style:italic;">The Waterfall Model is a sequential software development methodology where each phase must be fully completed before the next begins, producing defined deliverables that feed forward — providing clear milestones and traceable progress throughout the three-week development cycle.</p>
+
+<div class="ph">
+  <div><div class="num" style="background:var(--p1b);color:var(--p1c);">1</div></div>
+  <div>
+    <div class="pname">Requirements analysis</div>
+    <div class="ptime">Week 1 · Days 1–3</div>
+    <div class="acts">
+      <div class="act"><span class="dot" style="background:var(--p1c)"></span>Define user stories for Ākonga, Kaiako, and Admin</div>
+      <div class="act"><span class="dot" style="background:var(--p1c)"></span>Identify system and cultural requirements</div>
+      <div class="act"><span class="dot" style="background:var(--p1c)"></span>Establish acceptance criteria per user story</div>
+      <div class="act"><span class="dot" style="background:var(--p1c)"></span>Prioritise product backlog on GitHub Projects</div>
+    </div>
+    <div class="dv"><span style="font-weight:500;color:var(--p1c);">Deliverable —</span> User stories, acceptance criteria, prioritised backlog</div>
+  </div>
+</div>
+
+<div class="arr">↓</div>
+
+<div class="ph">
+  <div><div class="num" style="background:var(--p2b);color:var(--p2c);">2</div></div>
+  <div>
+    <div class="pname">System design</div>
+    <div class="ptime">Week 1 · Days 4–7</div>
+    <div class="acts">
+      <div class="act"><span class="dot" style="background:var(--p2c)"></span>Design OOP class hierarchy (User, Flashcard, Session)</div>
+      <div class="act"><span class="dot" style="background:var(--p2c)"></span>Design PostgreSQL schema for Supabase</div>
+      <div class="act"><span class="dot" style="background:var(--p2c)"></span>Plan Flask route structure and application layers</div>
+      <div class="act"><span class="dot" style="background:var(--p2c)"></span>Produce class diagrams and UI wireframes</div>
+    </div>
+    <div class="dv"><span style="font-weight:500;color:var(--p2c);">Deliverable —</span> Class diagrams, database schema, architecture plan</div>
+  </div>
+</div>
+
+<div class="arr">↓</div>
+
+<div class="ph">
+  <div><div class="num" style="background:var(--p3b);color:var(--p3c);">3</div></div>
+  <div>
+    <div class="pname">Implementation</div>
+    <div class="ptime">Weeks 1–2 · Days 7–16</div>
+    <div class="acts">
+      <div class="act"><span class="dot" style="background:var(--p3c)"></span>Build OOP domain layer and Flashcard subclasses</div>
+      <div class="act"><span class="dot" style="background:var(--p3c)"></span>Develop Flask routes, templates, Bootstrap frontend</div>
+      <div class="act"><span class="dot" style="background:var(--p3c)"></span>Integrate Supabase PostgreSQL and Flask-Login auth</div>
+      <div class="act"><span class="dot" style="background:var(--p3c)"></span>Containerise the application with Docker</div>
+    </div>
+    <div class="dv"><span style="font-weight:500;color:var(--p3c);">Deliverable —</span> Working Flask application running in Docker locally</div>
+  </div>
+</div>
+
+<div class="arr">↓</div>
+
+<div class="ph">
+  <div><div class="num" style="background:var(--p4b);color:var(--p4c);">4</div></div>
+  <div>
+    <div class="pname">Testing</div>
+    <div class="ptime">Weeks 2–3 · Days 14–19</div>
+    <div class="acts">
+      <div class="act"><span class="dot" style="background:var(--p4c)"></span>Write unit tests for OOP classes and services</div>
+      <div class="act"><span class="dot" style="background:var(--p4c)"></span>Perform acceptance testing per user story</div>
+      <div class="act"><span class="dot" style="background:var(--p4c)"></span>Test role-based route protection and auth flows</div>
+      <div class="act"><span class="dot" style="background:var(--p4c)"></span>Document test results and resolve defects</div>
+    </div>
+    <div class="dv"><span style="font-weight:500;color:var(--p4c);">Deliverable —</span> Test report, resolved defects, tested prototype</div>
+  </div>
+</div>
+
+<div class="arr">↓</div>
+
+<div class="ph">
+  <div><div class="num" style="background:var(--p5b);color:var(--p5c);">5</div></div>
+  <div>
+    <div class="pname">Deployment</div>
+    <div class="ptime">Week 3 · Days 18–21</div>
+    <div class="acts">
+      <div class="act"><span class="dot" style="background:var(--p5c)"></span>Deploy containerised app to Render from GitHub</div>
+      <div class="act"><span class="dot" style="background:var(--p5c)"></span>Configure environment variables and Supabase connection</div>
+      <div class="act"><span class="dot" style="background:var(--p5c)"></span>Verify live URL and all user workflows in production</div>
+      <div class="act"><span class="dot" style="background:var(--p5c)"></span>Finalise README and project documentation</div>
+    </div>
+    <div class="dv"><span style="font-weight:500;color:var(--p5c);">Deliverable —</span> Live deployment URL, GitHub repository, full documentation</div>
+  </div>
+</div>
+
+<div class="arr">↓</div>
+
+<div class="ph">
+  <div><div class="num" style="background:var(--p6b);color:var(--p6c);">6</div></div>
+  <div>
+    <div class="pname">Maintenance</div>
+    <div class="ptime">Ongoing · Post-delivery</div>
+    <div class="acts">
+      <div class="act"><span class="dot" style="background:var(--p6c)"></span>Monitor application performance on Render</div>
+      <div class="act"><span class="dot" style="background:var(--p6c)"></span>Address bug reports and vocabulary corrections</div>
+      <div class="act"><span class="dot" style="background:var(--p6c)"></span>Gather learner feedback for future improvements</div>
+      <div class="act"><span class="dot" style="background:var(--p6c)"></span>Document lessons learned in the reflection report</div>
+    </div>
+    <div class="dv"><span style="font-weight:500;color:var(--p6c);">Deliverable —</span> Reflection report, maintenance log, improvement proposals</div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:14px;font-size:11px;color:var(--color-text-secondary);letter-spacing:0.5px;">
+  Ako Kupu · MSE800 Assessment 2 · Group E · Yirong Chen &amp; Eric Gomez
+</div>
