@@ -1,4 +1,4 @@
-# Login / Registration System For Ako-puku demo
+# Login / Registration Demo System For Ako-puku 
 
 
 A minimal authentication system covering registration, login, profile management (Full Name, Date of Birth), and a "Forgot Password" flow. This simplified version removes extra layers and uses a single table to keep the system lean and easy to read.
