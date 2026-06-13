@@ -44,10 +44,22 @@ class DatabaseManager:
                     phone TEXT,
                     password_hash TEXT NOT NULL,
                     role TEXT NOT NULL CHECK(role IN ('customer', 'admin')),
-                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    reset_token TEXT,
+                    reset_expires TEXT
                 )
             """)
             connection.commit()
+
+            existing_columns = {
+                row["name"] for row in cursor.execute("PRAGMA table_info(users)").fetchall()
+            }
+            if "reset_token" not in existing_columns:
+                cursor.execute("ALTER TABLE users ADD COLUMN reset_token TEXT")
+            if "reset_expires" not in existing_columns:
+                cursor.execute("ALTER TABLE users ADD COLUMN reset_expires TEXT")
+            connection.commit()
+
             print("Tables created successfully.")
         except sqlite3.Error as e:
             raise Exception(f"Error creating tables: {e}")

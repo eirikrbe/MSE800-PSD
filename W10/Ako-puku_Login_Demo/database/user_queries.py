@@ -25,3 +25,17 @@ def get_user_by_id(db_manager, user_id):
 def admin_exists(db_manager):
     query = "SELECT 1 FROM users WHERE role = 'admin' LIMIT 1"
     return db_manager.fetch_one(query) is not None
+
+
+def set_reset_token(db_manager, email, token, expires_at):
+    query = "UPDATE users SET reset_token = ?, reset_expires = ? WHERE email = ?"
+    db_manager.execute_query(query, (token, expires_at, email))
+
+
+def update_password(db_manager, email, password_hash):
+    query = """
+        UPDATE users
+        SET password_hash = ?, reset_token = NULL, reset_expires = NULL
+        WHERE email = ?
+    """
+    db_manager.execute_query(query, (password_hash, email))

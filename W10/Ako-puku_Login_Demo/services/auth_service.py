@@ -1,13 +1,24 @@
 
 # auth_service.py
 
-import bcrypt 
+import bcrypt
+import secrets
+from datetime import datetime, timedelta, timezone
 from services.user_factory import UserFactory
-from database.user_queries import add_user, get_user_by_email, admin_exists
+from database.user_queries import (
+    add_user,
+    get_user_by_email,
+    admin_exists,
+    set_reset_token,
+    update_password,
+)
 
 
 class AuthService:
     """Handles password hashing, registration rules, and role-based login."""
+
+    RESET_TOKEN_TTL_MINUTES = 15
+
     def __init__(self, db_manager):
         """Dependency injection of database manager."""
         self.db_manager = db_manager
@@ -80,3 +91,51 @@ class AuthService:
             )
 
         return None
+
+    def request_password_reset(self, email):
+        """Generate a time-limited reset code for the given email.
+
+        Raises ValueError if no account exists with that email.
+        Returns the generated reset token (in a real system this would be
+        emailed to the user instead of returned directly).
+        """
+        user_row = get_user_by_email(self.db_manager, email)
+
+        if not user_row:
+            raise ValueError("No account found with that email.")
+
+        token = secrets.token_hex(4).upper()
+        expires_at = (
+            datetime.now(timezone.utc) + timedelta(minutes=self.RESET_TOKEN_TTL_MINUTES)
+        ).isoformat()
+
+        set_reset_token(self.db_manager, email, token, expires_at)
+
+        return token
+
+    def reset_password(self, email, token, new_password):
+        """Validate a reset code and update the user's password.
+
+        Raises ValueError if the account doesn't exist, no reset was
+        requested, the code doesn't match, or the code has expired.
+        On success, stores the new bcrypt hash and clears the reset code.
+        """
+        user_row = get_user_by_email(self.db_manager, email)
+
+        if not user_row:
+            raise ValueError("No account found with that email.")
+
+        stored_token = user_row["reset_token"]
+        expires_at = user_row["reset_expires"]
+
+        if not stored_token or not expires_at:
+            raise ValueError("No password reset was requested for this account.")
+
+        if token.strip().upper() != stored_token:
+            raise ValueError("Invalid reset code.")
+
+        if datetime.now(timezone.utc) > datetime.fromisoformat(expires_at):
+            raise ValueError("Reset code has expired. Please request a new one.")
+
+        password_hash = self.hash_password(new_password)
+        update_password(self.db_manager, email, password_hash)

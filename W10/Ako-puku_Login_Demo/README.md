@@ -1,6 +1,6 @@
 # Login / Registration Demo System for Ako-Puku
 
-A minimal authentication system for **Ako-Puku** (A Web-Based Te Reo Māori Flashcard and Learner Progress System), covering account **registration** and **login** via a command-line interface. The system uses a single SQLite `users` table and a small set of well-separated modules (CLI, Services, Database, Models) to keep the codebase lean and easy to read.
+A minimal authentication system for **Ako-Puku** (A Web-Based Te Reo Māori Flashcard and Learner Progress System), covering account **registration**, **login**, and **forgot password** via a command-line interface. The system uses a single SQLite `users` table and a small set of well-separated modules (CLI, Services, Database, Models) to keep the codebase lean and easy to read.
 
 **DEVELOPMENT TEAM - Group E**
 
@@ -12,11 +12,11 @@ A minimal authentication system for **Ako-Puku** (A Web-Based Te Reo Māori Flas
 ```mermaid
 graph TB
     subgraph CLI["CLI Layer"]
-        Menu[main_menu<br/>Login / Register / Exit]
+        Menu[main_menu<br/>Login / Register / Forgot Password / Exit]
     end
 
     subgraph Svc["Service Layer"]
-        Auth[AuthService<br/>hash & verify password<br/>register_user / login]
+        Auth[AuthService<br/>hash & verify password<br/>register_user / login<br/>request_password_reset / reset_password]
         Factory[UserFactory<br/>builds Customer / Admin]
     end
 
@@ -67,7 +67,7 @@ graph LR
 
     subgraph M4["database"]
         database_manager[database_manager.py<br/>SQLite connection & schema]
-        user_queries[user_queries.py<br/>SQL for users table]
+        user_queries[user_queries.py<br/>SQL for users table<br/>incl. reset_token / reset_expires]
     end
 
     main_menu --> auth_service
@@ -109,10 +109,13 @@ classDiagram
 
     class AuthService {
         -db_manager
+        +int RESET_TOKEN_TTL_MINUTES
         +hash_password(password) str
         +verify_password(password, stored_hash) bool
         +register_user(full_name, email, password, phone, role) User
         +login(email, password) User
+        +request_password_reset(email) str
+        +reset_password(email, token, new_password)
         +user_exists(email) bool
         +admin_exists() bool
     }
@@ -198,6 +201,60 @@ sequenceDiagram
     end
 ```
 
+## Forgot Password Flow
+
+The CLI demo combines token generation and reset into a single interactive flow: the reset code would be emailed in a production system, but here it is printed to the console so the flow can be tested end-to-end without an email provider.
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant Menu as main_menu (CLI)
+    participant Auth as AuthService
+    participant DB as DatabaseManager
+    participant Store as SQLite users table
+    participant Bcrypt as bcrypt
+
+    U->>Menu: Select "Forgot Password"
+    Menu->>U: Prompt for account email
+    U->>Menu: Enter email
+    Menu->>Auth: request_password_reset(email)
+    Auth->>DB: get_user_by_email(email)
+    DB->>Store: SELECT * FROM users WHERE email = ?
+    alt Email not found
+        Store-->>DB: no row
+        DB-->>Auth: None
+        Auth-->>Menu: raise ValueError("No account found with that email.")
+        Menu-->>U: Show error, return to menu
+    else Email found
+        Store-->>DB: user row
+        DB-->>Auth: user row
+        Auth->>Auth: token = secrets.token_hex(4)<br/>expires_at = now + 15 min
+        Auth->>DB: set_reset_token(email, token, expires_at)
+        DB->>Store: UPDATE users SET reset_token, reset_expires
+        Auth-->>Menu: token
+        Menu-->>U: Display reset code<br/>(stand-in for emailed code)
+
+        U->>Menu: Enter reset code + new password
+        Menu->>Auth: reset_password(email, token, new_password)
+        Auth->>DB: get_user_by_email(email)
+        DB->>Store: SELECT * FROM users WHERE email = ?
+        Store-->>DB: user row (reset_token, reset_expires)
+        DB-->>Auth: user row
+
+        alt Token missing / mismatched / expired
+            Auth-->>Menu: raise ValueError(reason)
+            Menu-->>U: Show error, return to menu
+        else Token valid
+            Auth->>Bcrypt: hash_password(new_password)
+            Bcrypt-->>Auth: new password_hash
+            Auth->>DB: update_password(email, new password_hash)
+            DB->>Store: UPDATE users SET password_hash,<br/>reset_token = NULL, reset_expires = NULL
+            Auth-->>Menu: success
+            Menu-->>U: "Password reset successfully"
+        end
+    end
+```
+
 ## Password Hashing & Storage (bcrypt)
 
 `AuthService` never stores or compares plaintext passwords. It relies on `bcrypt` for one-way hashing (registration) and constant-style verification (login).
@@ -237,6 +294,8 @@ erDiagram
         string password_hash "bcrypt hash (salt + hash combined)"
         string role "customer | admin"
         string created_at
+        string reset_token "nullable, set by forgot-password flow"
+        string reset_expires "nullable, ISO 8601 UTC timestamp"
     }
 ```
 
@@ -245,12 +304,12 @@ erDiagram
 - **Maintainability** — Clear separation between CLI, services, models and database layers, each with a single responsibility.
 - **Security** — Passwords are never stored in plaintext; `bcrypt` is used to hash and verify credentials.
 - **Extensibility** — `UserFactory` and the `User`/`Customer`/`Admin` hierarchy allow new roles or fields (e.g. learner progress) to be added without reworking the auth flow.
-- **Readability** — A single `users` table and two CLI actions (Login / Register) keep the whole flow easy to follow at a glance.
+- **Readability** — A single `users` table and three CLI actions (Login / Register / Forgot Password) keep the whole flow easy to follow at a glance.
 
 ## Future Enhancements
 
 - Profile management (edit full name, add date of birth)
-- "Forgot password" flow with time-limited reset tokens sent by email
+- Send the reset code by email instead of printing it to the console
 - Integration with the Ako-Puku flashcard and learner progress modules
 
 ## Running the Demo
