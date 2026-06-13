@@ -80,11 +80,11 @@ interface/strategy classes.
 
 `flake8` reports no violations, and `pylint` rates the module `10.00/10`.
 
-### pylint score
+### flake8 & pylint score
 
 ![pylint 10.00/10](pylint.png)
 
-## Sample Outputs
+## Sample Output
 
 
-![pylint 10.00/10](image.png)
+![Output](Output.png)
