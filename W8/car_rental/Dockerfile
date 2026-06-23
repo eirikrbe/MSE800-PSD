@@ -14,5 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt || true
 # Copy the app source
 COPY . /app
 
+# Ensure /app is writable (fixes volume mount permission issues on macOS)
+RUN chmod 777 /app
+
 # Default command runs the CLI app
 CMD ["python", "app.py"]
