@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fruits</title>
+</head>
+<body>
+    <h1>Fruits</h1>
+        <ul>
+        {% if fruits %}
+            <p>Here are your fruits:</p>
+            {% for fruit in fruits %}
+                <li>{{ fruit }}</li>
+            {% endfor %}
+        {% else %}
+            <p>Your basket is empty.</p>
+        {% endif %}
+    </ul>
+</body>
+</html>

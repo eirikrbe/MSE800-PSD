@@ -1,0 +1,46 @@
+{% extends "calculator/base.html" %}
+
+{% block content %}
+    <hgroup>
+        <h1>BMI Calculator</h1>
+        <p>Understand your weight in seconds.</p>
+    </hgroup>
+
+    <p>
+        Body Mass Index (BMI) is a simple measure that uses your height and
+        weight to estimate whether you are in a healthy weight range. It is
+        widely used as a quick, first-look indicator of body composition.
+    </p>
+
+    <h2>How it works</h2>
+    <p>BMI is calculated with this formula:</p>
+    <blockquote>
+        <strong>BMI = weight (kg) ÷ height (m)²</strong>
+    </blockquote>
+
+    <h2>What the numbers mean</h2>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">BMI range</th>
+                <th scope="col">Category</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Below 18.5</td><td>Underweight</td></tr>
+            <tr><td>18.5 – 24.9</td><td>Normal weight</td></tr>
+            <tr><td>25.0 – 29.9</td><td>Overweight</td></tr>
+            <tr><td>30.0 and above</td><td>Obese</td></tr>
+        </tbody>
+    </table>
+
+    <p>
+        <small>
+            BMI is a general guide and does not account for muscle mass, age, or
+            body type. For personal health advice, speak to a medical professional.
+        </small>
+    </p>
+
+    <a href="{% url 'calculator:calculator' %}" role="button">Calculate your BMI →</a>
+
+{% endblock %}

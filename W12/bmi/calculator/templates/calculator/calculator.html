@@ -1,0 +1,24 @@
+{% extends "calculator/base.html" %}
+
+{% block content %}
+    <h1>BMI Calculator</h1>
+    <p>Enter your height and weight to calculate your BMI.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn">Calculate BMI</button>
+    </form>
+    <dialog {% if bmi %}open{% endif %}>
+        <article>
+            <header>
+                <a href="{% url 'calculator:calculator' %}" aria-label="Close" rel="prev"></a>
+                <p><strong>Your BMI Result</strong></p>
+            </header>
+            <h2>Your BMI is: {{ bmi }}</h2>
+            <p>{{ message }}</p>
+            <footer>
+                <a href="{% url 'calculator:calculator' %}" role="button">Close</a>
+            </footer>
+        </article>
+    </dialog>
+{% endblock %}
