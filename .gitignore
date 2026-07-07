@@ -1,3 +1,5 @@
+#.gitignore
+
 .DS_Store
 .vscode/
 
@@ -9,6 +11,7 @@ Car_Rental_System_VIN-Locked/
 
 
 *.bkp
+*.env
 
 
 __pycache__/
