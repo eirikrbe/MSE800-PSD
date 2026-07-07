@@ -6,8 +6,7 @@ Command-line program that generates a self-drive New Zealand travel itinerary
 with the Google Gemini API. The traveller answers eight questions (trip length,
 month, route, budget, transport, interests, age) and the program makes ONE
 API call that returns a schema-enforced JSON itinerary, renders it to Markdown,
-and then evaluates its own output. The main purpose of this activity is to
-practise prompt engineering, token-cost control, and evaluation of LLM output.
+and then evaluates its own output. The main features are prompt engineering, token-cost control, and evaluation of LLM output through LLM-as-judge.
 
 ## Overview
 
