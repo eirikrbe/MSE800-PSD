@@ -23,10 +23,13 @@ def my_decorator(func):
 
 @my_decorator
 def hello():
-    """This greets someone."""
+    """This greets."""
     print("hello")
 
 print(hello.__name__)
 print(hello.__doc__)
 
 if __name__ == "__main__":
+    hello()
+    print(hello.__name__)
+    print(hello.__doc__)
